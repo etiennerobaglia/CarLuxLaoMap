@@ -16,11 +16,6 @@
 <script>
 export default {
   name: 'Toggle',
-  // data() {
-  //   return {
-  //     defaultValue: false,
-  //   };
-  // },
   props: {
     name: String,
     title: String,

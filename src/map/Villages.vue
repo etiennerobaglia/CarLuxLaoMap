@@ -46,9 +46,9 @@
         weight: 1.5,
         opacity: .85,
         fillColor: $White,
-        fillOpacity: .3,
+        fillOpacity: .4,
         smoothFactor: 1,
-        interactivity: false,
+        interactive: false,
       }"
     />
 
