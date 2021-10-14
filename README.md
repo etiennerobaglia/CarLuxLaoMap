@@ -1,4 +1,4 @@
-# caritas-map
+# xhk-hpn-map
 
 ## Project setup
 ```

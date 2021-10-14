@@ -1,0 +1,46 @@
+.village-label {
+  /* left: 0;
+  border-right-color: #fff;
+  top: 50%;
+  margin-top: -6px;
+  position: absolute;
+  pointer-events: none;
+  border: 6px solid transparent;
+  background: transparent;
+  content: ""; */
+  font-weight: bold;
+  border: none;
+  border-radius: none;
+  box-shadow:none;
+  background: transparent;
+}
+.leaflet-tooltip::before {
+  display: none;
+}
+.leaflet-tooltip {
+  font-weight: bold;
+  border: none;
+  border-radius: none;
+  box-shadow:none;
+  background: transparent;
+  font-size: .525rem;
+}
+
+.village-label-drr-sls {
+  color: #5d3200;
+}
+.village-label-sls {
+  color: #240856;
+}
+.village-label-drr {
+  color: #134a1d;
+}
+
+.tooltip-city {
+  font-size: .55rem;
+}
+
+.tooltip-town {
+  margin-top: 2px;
+  font-size: .475rem;
+}
