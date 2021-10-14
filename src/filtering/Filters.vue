@@ -1,6 +1,4 @@
 <template>
-<!-- <div class="filters-container"> -->
-  <!-- <h2 class="filters-title">Filters</h2> -->
   <nav class="side-panel-content filters">
     <FilterSelect
       :title="'Projects'"
@@ -44,23 +42,30 @@
         filters.activitySelection = selection;
       }"
     />
-    <VillageNameToggle
+    <!-- <VillageNameToggle
+      @displayVillageName="status => {
+        filters.displayVillageName = status;
+      }"
+    /> -->
+    <Toggle
+      :title="'Village Names'"
+      :name="'displayVillageName'"
       @displayVillageName="status => {
         filters.displayVillageName = status;
       }"
     />
   </nav>
-<!-- </div> -->
 </template>
 
 <script>
-import VillageNameToggle from './VillageNameToggle.vue';
+// import VillageNameToggle from './VillageNameToggle.vue';
+import Toggle from './Toggle.vue';
 import FilterSelect from './FilterSelect.vue';
 
 export default {
   name: 'Filters',
   components: {
-    VillageNameToggle,
+    Toggle,
     FilterSelect
   },
   data() {

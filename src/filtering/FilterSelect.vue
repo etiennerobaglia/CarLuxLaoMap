@@ -54,10 +54,8 @@ export default {
   border-bottom: 1px solid #7d7d7d;
   padding-left: .2rem;
   margin-right: 1.25rem;
-  /* margin-bottom: .75rem; */
   border: 1px solid #7d7d7d;
   border-radius: 2px;
-  /* box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1); */
   width: 55%;
   height: 2.25rem;
   cursor: pointer;

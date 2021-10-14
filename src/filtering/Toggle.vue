@@ -1,13 +1,13 @@
 <template>
 <div class="checkbox">
-  <label for="village-name" class="filter-label">
-    Village Names:
+  <label :for="title" class="filter-label">
+    {{title}}:
   </label>
   <input 
     class="toggle"
     type="checkbox"
     name="village-name"
-    v-model="checked" />
+    v-model="defaultValue" />
 </div>
 
 
@@ -15,35 +15,37 @@
 
 <script>
 export default {
-  name: 'VillageNameToggle',
-  data() {
-    return {
-      checked: false,
-    };
+  name: 'Toggle',
+  // data() {
+  //   return {
+  //     defaultValue: false,
+  //   };
+  // },
+  props: {
+    name: String,
+    title: String,
+    defaultValue: Boolean,
   },
   created() {
-    this.$emit('displayVillageName', this.checked);
+    this.$emit(this.name, this.defaultValue);
   },
   updated() {
-    this.$emit('displayVillageName', this.checked);
+    this.$emit(this.name, this.defaultValue);
   },
 };
 </script>
 
 <style scoped>
 .checkbox {
-  /* padding-top: 1rem; */
-  /* margin-left: .0; */
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: .75rem;
+  padding-top: .25rem;
 }
 .checkbox input {
   margin-right: 4.5rem;
 }
-
-
 .toggle {
   -webkit-appearance: none;
   -moz-appearance: none;
