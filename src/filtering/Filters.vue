@@ -54,6 +54,13 @@
         filters.displayVillageName = status;
       }"
     />
+    <Toggle
+      :title="'Village Area'"
+      :name="'displayVillageArea'"
+      @displayVillageArea="status => {
+        filters.displayVillageArea = status;
+      }"
+    />
   </nav>
 </template>
 
@@ -75,6 +82,7 @@ export default {
         districtSelection: String,
         activitySelection: String,
         displayVillageName: Boolean,
+        displayVillageArea: Boolean,
       },
     };
   },

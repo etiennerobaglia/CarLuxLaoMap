@@ -40,8 +40,17 @@
 
     <l-geo-json
       :geojson="villagesArea"
+      :visible="filters.displayVillageArea"
+      :options="{
+        color: $LightBlack,
+        weight: 1.5,
+        opacity: .85,
+        fillColor: $White,
+        fillOpacity: .3,
+        smoothFactor: 1,
+        interactivity: false,
+      }"
     />
-
 
   </l-layer-group>
 </template>
@@ -59,7 +68,7 @@ export default {
     LLayerGroup,
     LCircleMarker,
     LTooltip,
-    LGeoJson
+    LGeoJson,
   },
   data() {
     return {
@@ -121,18 +130,6 @@ export default {
         }
       );
     },
-    // filteredVillages() {
-    //   return this.villages.features.filter(
-    //     (feature) => {
-    //       const includedProject = feature.properties.projects.join('').includes(this.filters.villagesSelection);
-    //       let includedDistrict;
-    //       if (this.filters.districtSelection == 'all') includedDistrict = true
-    //       else includedDistrict = feature.properties.district.includes(this.filters.districtSelection)
-    //       const villageAvailability = includedProject && includedDistrict;
-    //       return villageAvailability
-    //     }
-    //   );
-    // },
     displayVillages(){
       if (this.zoom>7) return true
       else return false
