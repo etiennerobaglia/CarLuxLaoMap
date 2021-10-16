@@ -53,6 +53,14 @@
   font-size: .475rem;
 }
 
+.dot-marker{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: .65rem;
+  font-weight: 500;
+}
+
 
 /* LEAFLET CONTROL CUSTOM */
 .leaflet-control-scale-line {
