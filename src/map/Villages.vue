@@ -38,17 +38,15 @@
         {{feature.properties['name-mou-english']}}
       </l-tooltip>
     </l-circle-marker>
-      <l-circle-marker
-        :visible="displayVillagesArea"
-        :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
-        :stroke="false"
-        :fillOpacity="1"
-        :radius="selectedVillage(index) ? 4.15 : 3.25"
-        :fillColor="$LightBlack"
-        :options="{
-          interactive: false,
-        }"
-      />
+    <l-circle-marker
+      :visible="displayVillagesArea"
+      :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
+      :stroke="false"
+      :fillOpacity="1"
+      :radius="selectedVillage(index) ? 4.15 : 3.25"
+      :fillColor="'black'"
+      :options="{interactive: false,}"
+    />
     <l-polygon
       :visible="displayVillagesArea"
       :lat-lngs="feature.geometry.coordinates"
@@ -143,7 +141,11 @@ export default {
       return this.villages.features.filter(
         (feature) => {
 
-          const includedProject = feature.properties.projects.join('').includes(this.filters.villagesSelection);
+          let includedProject;
+          if (this.filters.villagesSelection == 'all') includedProject = true;
+          if (this.filters.villagesSelection == 'baseline')
+            includedProject = feature.properties.baseline_strategy.distance_to_province_capital
+          else includedProject = feature.properties.projects.join('').includes(this.filters.villagesSelection);
           
           let includedDistrict;
           if (this.filters.districtSelection == 'all') includedDistrict = true

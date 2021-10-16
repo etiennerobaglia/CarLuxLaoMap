@@ -5,10 +5,10 @@
       :name="'villagesSelection'"
       :defaultValue="'Select Project'"
       :options="[
+        { value: 'all', name: 'All Vilages'},
         { value: 'SLS2', name: 'SLS2'},
         { value: 'DRR4', name: 'DRR4'},
-        { value: '', name: 'SLS2&DRR4'},
-        { value: '', name: 'Baseline Strategy'}
+        { value: 'baseline', name: 'Baseline Strategy'}
       ]"
       @villagesSelection="selection => {
         filters.villagesSelection = selection;
@@ -42,11 +42,6 @@
         filters.activitySelection = selection;
       }"
     />
-    <!-- <VillageNameToggle
-      @displayVillageName="status => {
-        filters.displayVillageName = status;
-      }"
-    /> -->
     <Toggle
       :title="'Village Names'"
       :name="'displayVillageName'"
@@ -65,7 +60,6 @@
 </template>
 
 <script>
-// import VillageNameToggle from './VillageNameToggle.vue';
 import Toggle from './Toggle.vue';
 import FilterSelect from './FilterSelect.vue';
 

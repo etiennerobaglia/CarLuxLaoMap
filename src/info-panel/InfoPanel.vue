@@ -33,6 +33,12 @@
       :showDetails="false"
     />
     <InfoDetails
+      v-if="village.properties.baseline_strategy.distance_to_province_capital"
+      :title="'Baseline Strategy'"
+      :details="village.properties.baseline_strategy"
+      :showDetails="false"
+    />
+    <InfoDetails
       v-if="
         village.properties.projects.includes('SLS2') 
         && village.properties['sls2'].infrastructure.type"
