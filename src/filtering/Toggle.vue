@@ -7,7 +7,7 @@
     class="toggle"
     type="checkbox"
     name="village-name"
-    v-model="defaultValue" />
+    v-model="toggleValue" />
 </div>
 
 
@@ -16,16 +16,21 @@
 <script>
 export default {
   name: 'Toggle',
+  data() {
+    return {
+      toggleValue: this.defaultValue,
+    }
+  },
   props: {
     name: String,
     title: String,
     defaultValue: Boolean,
   },
   created() {
-    this.$emit(this.name, this.defaultValue);
+    this.$emit(this.name, this.toggleValue);
   },
   updated() {
-    this.$emit(this.name, this.defaultValue);
+    this.$emit(this.name, this.toggleValue);
   },
 };
 </script>
