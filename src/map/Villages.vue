@@ -3,28 +3,31 @@
     layer-type="overlay"
     name="Villages"
   >
+  
+  <l-feature-group
+    v-for="(feature, index) in filteredVillages"
+    :key="feature.properties.key"
+    :ref="feature.properties.key"
+    @click="$emit('village', feature); clickedVillage = index"
+    @mouseover="overedVillage = index"
+    @mouseout="overedVillage = -1"
+  >
+  
     <l-circle-marker
-      v-for="(feature, index) in filteredVillages"
-      :visible="displayVillages"
-      :key="feature.properties.key"
-      :lat-lng="[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]"
+      :visible="displayVillagesDot"
+      :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
       
       :stroke="true"
-      :weight='(index == overedVillage || index == clickedVillage) ? 1.65*2.25 : 2.25 '
+      :weight='selectedVillage(index) ? 1.65*2.25 : 2.25'
       :opacity="1"
-      :color="displayBorderCircle(feature.properties.projects)"
+      :color="colorBorderCircle(feature.properties.projects)"
       
       :fill="true"
-      :radius="(index == overedVillage || index == clickedVillage) ? villageRadius*1.65 : villageRadius"
-      :fillColor="displayInnerCircle(feature.properties.projects)"
+      :radius="selectedVillage(index) ? villageRadius*1.65 : villageRadius"
+      :fillColor="colorInnerCircle(feature.properties.projects)"
       :fillOpacity="1"
       
-      @click="$emit('village', feature); clickedVillage = index"
-      @mouseover="overedVillage = index"
-      @mouseout="overedVillage = -1"
     >
-      <!-- :color="villageColor(feature.properties.projects)"
-      :fillColor="villageColor(feature.properties.projects)" -->
       <l-tooltip
         v-show="filters.displayVillageName"
         :options="{
@@ -33,33 +36,61 @@
           interactive: true,
         }"
       >
-          <!-- className: toolTipclassName(feature.properties.projects) -->
-      {{feature.properties['name-mou-english']}}
+        {{feature.properties['name-mou-english']}}
       </l-tooltip>
     </l-circle-marker>
+    
+    <l-polygon
+      :visible="displayVillagesArea"
+      :lat-lngs="feature.geometry.coordinates"
+      :weight="selectedVillage(index) ? 1.65*2.25 : 2.25"
+      :opacity="1"
+      :fillOpacity="selectedVillage(index) ? 0.8 : 0.35"
+      :color="colorBorderCircle(feature.properties.projects)"
+      :fillColor="colorInnerCircle(feature.properties.projects)"
+    >
+      <l-tooltip
+        v-show="filters.displayVillageName"
+        :options="{
+          permanent: true,
+          direction: 'auto',
+          interactive: true,
+          className: 'leaflet-tooltip-village-area',
+        }"
+      >
+        {{feature.properties['name-mou-english']}}
+      </l-tooltip>
+    </l-polygon>
 
-    <l-geo-json
-      :geojson="villagesArea"
-      :visible="filters.displayVillageArea"
-      :options="{
-        color: $LightBlack,
-        weight: 1.5,
-        opacity: .85,
-        fillColor: $White,
-        fillOpacity: .4,
-        smoothFactor: 1,
-        interactive: false,
-      }"
-    />
-
+  </l-feature-group>
   </l-layer-group>
 </template>
 
 <script>
-import { LLayerGroup, LCircleMarker, LTooltip, LGeoJson } from 'vue2-leaflet';
+import { 
+  LLayerGroup,
+  LTooltip,
+  LCircleMarker,
+  LFeatureGroup,
+  LPolygon
+  } from 'vue2-leaflet';
+import L from 'leaflet';
 
-import villages from '../assets/villages-marker';
-import villagesArea from '../assets/villages-area-census-2015';
+
+import villageAreaAndDotData from '../assets/village-area-dot-data';
+
+function geojsonToLatLng(geojson) {
+  let latLng = geojson;
+  geojson.features.forEach(feature => {
+    let featureGeoCoordLatlng = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 2, false)
+    feature.geometry.coordinates = featureGeoCoordLatlng;
+  });
+  console.log(latLng);
+  return latLng;
+
+}
+
+let latLngVillagesArea = geojsonToLatLng(villageAreaAndDotData);
 
 
 export default {
@@ -68,7 +99,8 @@ export default {
     LLayerGroup,
     LCircleMarker,
     LTooltip,
-    LGeoJson,
+    LFeatureGroup,
+    LPolygon,
   },
   data() {
     return {
@@ -76,11 +108,11 @@ export default {
         permanent: true,
         direction: 'auto',
       },
-      villages: villages,
+      villages: villageAreaAndDotData,
       villageRadius: 5,
       overedVillage: -1,
       clickedVillage: -1,
-      villagesArea
+      latLngVillagesArea,
     };
   },
   props: {
@@ -91,6 +123,7 @@ export default {
         return {
           villagesSelection: 'sls',
           displayVillageName: true,
+          displayVillageArea: Boolean,
         };
       },
     },
@@ -130,47 +163,28 @@ export default {
         }
       );
     },
-    displayVillages(){
-      if (this.zoom>7) return true
+    displayVillagesDot(){
+      if (this.zoom>7 && !this.filters.displayVillageArea) return true
       else return false
     },
-    hoverRadius() {
-      return 10
-    },
-    setRadius() {
-      if (this.zoom>7) return (this.zoom/1.9)
-      else return 2.75
+    displayVillagesArea(){
+      if (this.zoom>7 && this.filters.displayVillageArea) return true
+      else return false
     },
   },
   methods: {
-    increaseRadius(){
-      this.villageRadius = this.villageRadius*3;
+    selectedVillage(villageIndex) {
+      if (villageIndex == this.overedVillage || villageIndex == this.clickedVillage) return true
+      else return false
     },
-    villageColor(project) {
-      if (project.includes('SLS2') && project.includes('DRR4')) return this.$mapStyleDRRSLSVillageColor;
-      else if (project.includes('SLS2')) return this.$mapStyleSLSVillageColor;
-      else if (project.includes('DRR4')) return this.$mapStyleDRRVillageColor;
-      else return '#000'
-    },
-    displayInnerCircle(project) {
+    colorInnerCircle(project) {
       if (project.includes('SLS2')) return this.$LightRed;
       else return this.$LightBlack;
     },
-    displayBorderCircle(project) {
+    colorBorderCircle(project) {
       if (project.includes('DRR4')&& !project.includes('SLS2'))  return this.$LightRed
       else if (project.includes('DRR4')) return this.$LightBlack
       else return this.$White;
-    },
-    toolTipclassName(project) {
-      if (project.includes('SLS2') && project.includes('DRR4')) {
-        return 'village-label-drr-sls';}
-      else if (project.includes('SLS2')) {
-        return 'village-label-sls';
-      } 
-      else if (project.includes('DRR4')) {
-        return 'village-label-drr';
-      }
-      else return '#000'
     },
   },
 };

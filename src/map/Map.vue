@@ -21,9 +21,8 @@
 
       :options="mapOptions"
 
-        :bounds="bounds"
+      :bounds="bounds"
     >
-      <!-- :max-bounds="maxBounds" -->
       <l-control-scale
         position="topleft"
         :imperial="false"

@@ -25,6 +25,14 @@
   background: transparent;
   font-size: .525rem;
 }
+.leaflet-tooltip.leaflet-tooltip-village-area {
+  font-size: .565rem;
+  font-weight: bold;
+  border: none;
+  border-radius: none;
+  box-shadow:none;
+  background: transparent;
+}
 
 .village-label-drr-sls {
   color: #5d3200;
@@ -59,15 +67,15 @@
   background: white;
 }
 
-.map .leaflet-control-layers-toggle:before{ 
+.map .leaflet-control-layers-toggle:before {
   content: "Layers";
   font-weight: 500;
-  font-size: .625rem;
+  font-size: .7rem;
   color: white;
   background: #D22F3D;
-  padding: 0px .325rem 1px;
+  padding: 0px .25rem 1px;
   position: absolute;
-  top: -15px;
+  top: -16px;
   left: -2px;
   height: 13px;
   border-top-right-radius: 1px;

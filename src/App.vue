@@ -85,6 +85,7 @@ export default {
 .side-panel {
   margin-top: 8px;
   width:25vw;
+  max-width: 350px;
   max-height: 100%;
   z-index: 1000;
   position: fixed;
