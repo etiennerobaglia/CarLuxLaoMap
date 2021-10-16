@@ -26,10 +26,9 @@
       :radius="selectedVillage(index) ? villageRadius*1.65 : villageRadius"
       :fillColor="colorInnerCircle(feature.properties.projects)"
       :fillOpacity="1"
-      
     >
       <l-tooltip
-        v-show="filters.displayVillageName"
+        v-show="filters.displayVillageName || selectedVillage(index)"
         :options="{
           permanent: true,
           direction: 'auto',
@@ -39,7 +38,17 @@
         {{feature.properties['name-mou-english']}}
       </l-tooltip>
     </l-circle-marker>
-    
+      <l-circle-marker
+        :visible="displayVillagesArea"
+        :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
+        :stroke="false"
+        :fillOpacity="1"
+        :radius="selectedVillage(index) ? 4.15 : 3.25"
+        :fillColor="$LightBlack"
+        :options="{
+          interactive: false,
+        }"
+      />
     <l-polygon
       :visible="displayVillagesArea"
       :lat-lngs="feature.geometry.coordinates"
@@ -50,7 +59,7 @@
       :fillColor="colorInnerCircle(feature.properties.projects)"
     >
       <l-tooltip
-        v-show="filters.displayVillageName"
+        v-show="filters.displayVillageName || selectedVillage(index)"
         :options="{
           permanent: true,
           direction: 'auto',
@@ -72,7 +81,7 @@ import {
   LTooltip,
   LCircleMarker,
   LFeatureGroup,
-  LPolygon
+  LPolygon,
   } from 'vue2-leaflet';
 import L from 'leaflet';
 
