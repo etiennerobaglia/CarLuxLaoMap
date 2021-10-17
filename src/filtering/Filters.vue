@@ -45,6 +45,7 @@
     <Toggle
       :title="'Village Names'"
       :name="'displayVillageName'"
+      :defaultValue="false"
       @displayVillageName="status => {
         filters.displayVillageName = status;
       }"
@@ -52,6 +53,7 @@
     <Toggle
       :title="'Village Area'"
       :name="'displayVillageArea'"
+      :defaultValue="false"
       @displayVillageArea="status => {
         filters.displayVillageArea = status;
       }"
