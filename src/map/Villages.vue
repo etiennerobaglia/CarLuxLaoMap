@@ -23,10 +23,11 @@
       :color="'white'"
       
       :fill="true"
-      :radius="selectedVillage(index) ? 7.5 : 4.5"
+      :radius="selectedVillage(index) ? zoom/1.2 : zoom/1.4"
       :fillColor="villageColor(feature.properties.projects)"
       :fillOpacity="1"
     >
+      <!-- :radius="selectedVillage(index) ? 7.5 : 4.5" -->
       <l-tooltip
         v-show="filters.displayVillageName || selectedVillage(index)"
         :options="{
@@ -61,7 +62,7 @@
       :fillOpacity="selectedVillage(index) ? .4 : .125"
       :color="villageColor(feature.properties.projects)"
       :fillColor="villageColor(feature.properties.projects)"
-      :smoothFactor="2"
+      :smoothFactor="1.75"
       pane="shadowPane"
     >
       <l-tooltip
@@ -97,10 +98,9 @@ import villageAreaAndDotData from '../assets/village-area-dot-data';
 function geojsonToLatLng(geojson) {
   let latLng = geojson;
   geojson.features.forEach(feature => {
-    let featureGeoCoordLatlng = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 2, false)
+    let featureGeoCoordLatlng = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1, false)
     feature.geometry.coordinates = featureGeoCoordLatlng;
   });
-  console.log(latLng);
   return latLng;
 
 }
