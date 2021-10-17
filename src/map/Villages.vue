@@ -18,13 +18,13 @@
       :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
       
       :stroke="true"
-      :weight='selectedVillage(index) ? 1.65*2.25 : 2.25'
+      :weight='selectedVillage(index) ? 1.75 : .75'
       :opacity="1"
-      :color="colorBorderCircle(feature.properties.projects)"
+      :color="'white'"
       
       :fill="true"
-      :radius="selectedVillage(index) ? villageRadius*1.65 : villageRadius"
-      :fillColor="colorInnerCircle(feature.properties.projects)"
+      :radius="selectedVillage(index) ? 7.5 : 4.5"
+      :fillColor="villageColor(feature.properties.projects)"
       :fillOpacity="1"
     >
       <l-tooltip
@@ -33,28 +33,36 @@
           permanent: true,
           direction: 'auto',
           interactive: true,
+          className: toolTipclassName(feature.properties.projects),
+          offset: [10, 0]
         }"
       >
         {{feature.properties['name-mou-english']}}
       </l-tooltip>
     </l-circle-marker>
+
     <l-circle-marker
-      :visible="displayVillagesArea"
+      :visible="displayVillagesArea && selectedVillage(index)"
       :lat-lng="[feature.properties.coordinates.lat, feature.properties.coordinates.lon]"
-      :stroke="false"
+      :stroke="selectedVillage(index)"
+      :weight="1.5"
+      :color="'white'"
+      :opacity="1"
       :fillOpacity="1"
-      :radius="selectedVillage(index) ? 4.15 : 3.25"
-      :fillColor="'black'"
+      :radius="selectedVillage(index) ? 4.5 : 3.5"
+      :fillColor="villageColor(feature.properties.projects)"
       :options="{interactive: false,}"
     />
     <l-polygon
       :visible="displayVillagesArea"
       :lat-lngs="feature.geometry.coordinates"
-      :weight="selectedVillage(index) ? 1.65*2.25 : 2.25"
-      :opacity="1"
-      :fillOpacity="selectedVillage(index) ? 0.8 : 0.35"
-      :color="colorBorderCircle(feature.properties.projects)"
-      :fillColor="colorInnerCircle(feature.properties.projects)"
+      :weight="selectedVillage(index) ? 5 : 3.5"
+      :opacity="selectedVillage(index) ? 1 : .875"
+      :fillOpacity="selectedVillage(index) ? .4 : .125"
+      :color="villageColor(feature.properties.projects)"
+      :fillColor="villageColor(feature.properties.projects)"
+      :smoothFactor="2"
+      pane="shadowPane"
     >
       <l-tooltip
         v-show="filters.displayVillageName || selectedVillage(index)"
@@ -62,7 +70,7 @@
           permanent: true,
           direction: 'auto',
           interactive: true,
-          className: 'leaflet-tooltip-village-area',
+          className: toolTipclassName(feature.properties.projects),
         }"
       >
         {{feature.properties['name-mou-english']}}
@@ -116,7 +124,6 @@ export default {
         direction: 'auto',
       },
       villages: villageAreaAndDotData,
-      villageRadius: 5,
       overedVillage: -1,
       clickedVillage: -1,
       latLngVillagesArea,
@@ -188,14 +195,21 @@ export default {
       if (villageIndex == this.overedVillage || villageIndex == this.clickedVillage) return true
       else return false
     },
-    colorInnerCircle(project) {
-      if (project.includes('SLS2')) return this.$LightRed;
-      else return this.$LightBlack;
+    villageColor(project) {
+      // DRR only
+      if (project.includes('DRR4')&& !project.includes('SLS2')) return '#1f752f'
+      // DRR & SLS
+      else if (project.includes('DRR4')) return '#6b3c06'
+      // SLS only
+      else return '#2f1064';
     },
-    colorBorderCircle(project) {
-      if (project.includes('DRR4')&& !project.includes('SLS2'))  return this.$LightRed
-      else if (project.includes('DRR4')) return this.$LightBlack
-      else return this.$White;
+    toolTipclassName(project) {
+      // DRR only
+      if (project.includes('DRR4')&& !project.includes('SLS2')) return 'village-label-drr'
+      // DRR & SLS
+      else if (project.includes('DRR4')) return 'village-label-drr-sls'
+      // SLS only
+      else return 'village-label-sls';
     },
   },
 };
