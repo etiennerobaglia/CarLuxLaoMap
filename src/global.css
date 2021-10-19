@@ -1,25 +1,11 @@
-.village-label {
-  /* left: 0;
-  border-right-color: #fff;
-  top: 50%;
-  margin-top: -6px;
-  position: absolute;
-  pointer-events: none;
-  border: 6px solid transparent;
-  background: transparent;
-  content: ""; */
-  font-weight: bold;
-  border: none;
-  border-radius: none;
-  box-shadow:none;
-  background: transparent;
-}
+/* LEAFLET TOOLTIP CUSTOM */
+
 .leaflet-tooltip::before {
   display: none;
 }
 .leaflet-tooltip {
   border: none;
-  font-size: .65rem;
+  font-size: .75rem;
   font-weight: bold;
   border: none;
   border-radius: none;
@@ -28,10 +14,8 @@
   color: black;
   text-shadow: 0 1px 2px #ffffff;
 }
-.leaflet-tooltip.leaflet-tooltip-village-area {
-}
 
-.village-label-drr-sls {
+.village-label {
   color: #5d3200;
   background: #fffffff6;
   text-shadow: none;
@@ -39,23 +23,6 @@
   padding: 0;
   margin: 3px;
 }
-.village-label-sls {
-  color: #240856;
-  background: #fffffff6;
-  text-shadow: none;
-  border-radius: 4px;
-  padding: 0;
-  margin: 3px;
-}
-.village-label-drr {
-  color: #134a1d;
-  background: #fffffff6;
-  text-shadow: none;
-  border-radius: 4px;
-  padding: 0;
-  margin: 3px;
-}
-
 .tooltip-city {
   font-size: .55rem;
 }
@@ -73,6 +40,7 @@
   font-size: .65rem;
   font-weight: 500;
 }
+/* end LEAFLET TOOLTIP CUSTOM */
 
 
 /* LEAFLET CONTROL CUSTOM */
