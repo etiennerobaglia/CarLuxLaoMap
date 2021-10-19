@@ -54,6 +54,7 @@
       :geojson="XhkHpnPrimaryRoads"
       :visible="displayXhkHpnInfo"
       :options="{
+        smoothFactor,
         color: $mapStyleRoadsColor,
         weight: .7,
         interactive: false,
@@ -64,6 +65,7 @@
       :visible="displayXhkHpnInfo"
       :geojson="XhkHpnSecondaryRoads"
       :options="{
+        smoothFactor,
         color: $mapStyleRoadsColor,
         weight: .7,
         interactive: false,
@@ -94,6 +96,7 @@
       :visible="displayXhkHpnInfo"
       :geojson="XhkHpnRivers"
       :options="{
+        smoothFactor,
         color: $mapStyleWaterColor,
         weight: .7,
         interactive: false,
@@ -142,6 +145,7 @@ export default {
       PhaxayLake,
       XhkHpnVteCities,
       XhkHpnRivers,
+      smoothFactor: 2,
     };
   },
   computed: {
