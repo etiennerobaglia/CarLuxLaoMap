@@ -83,10 +83,12 @@ export default {
 }
 
 .side-panel {
+  display: flex;
+  flex-direction: column;
   margin-top: 8px;
   width:25vw;
   max-width: 350px;
-  max-height: 100%;
+  max-height: calc(100vh - 16px);
   z-index: 1000;
   position: fixed;
   right: 8px;
@@ -112,12 +114,13 @@ export default {
 }
 
 .side-panel-info {
-  max-height: 30%;
+  max-height: 100%;
+  overflow: scroll;
+}
+.side-panel-info .side-panel-content  {
 }
 
 .side-panel-filters {
-  max-height: 70%;
-  /* height: 30vh; */
   margin-bottom: 8px;
 }
 
