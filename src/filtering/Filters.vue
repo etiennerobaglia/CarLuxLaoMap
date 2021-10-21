@@ -5,7 +5,7 @@
       :name="'villagesSelection'"
       :defaultValue="'Select Project'"
       :options="[
-        { value: 'all', name: 'All Vilages'},
+        { value: 'all', name: 'All Villages'},
         { value: 'SLS2', name: 'SLS2'},
         { value: 'DRR4', name: 'DRR4'},
         { value: 'baseline', name: 'Baseline Strategy'}

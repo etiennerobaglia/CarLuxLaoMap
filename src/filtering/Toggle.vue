@@ -1,7 +1,10 @@
 <template>
-<div class="checkbox">
+<div 
+  class="checkbox"
+  :class="{ 'checkbox-active': toggleValue }"
+>
   <label :for="title" class="filter-label">
-    {{title}}:
+    {{title}}
   </label>
   <input 
     class="toggle"
@@ -36,6 +39,11 @@ export default {
 </script>
 
 <style scoped>
+
+.checkbox-active .filter-label {
+  color: #D22F3D;
+}
+
 .checkbox {
   display: flex;
   justify-content: space-between;

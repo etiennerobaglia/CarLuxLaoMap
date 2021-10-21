@@ -29,7 +29,6 @@
       :fillColor="villageColor"
       :fillOpacity="1"
     >
-      <!-- :radius="selectedVillage(feature.properties.key) ? 7.5 : 4.5" -->
       <l-tooltip
         v-show="filters.displayVillageName || selectedVillage(feature.properties.key)"
         :options="{
@@ -156,7 +155,7 @@ export default {
 
           let includedProject;
           if (this.filters.villagesSelection == 'all') includedProject = true;
-          if (this.filters.villagesSelection == 'baseline')
+          else if (this.filters.villagesSelection == 'baseline')
             includedProject = feature.properties.baseline_strategy.distance_to_province_capital
           else includedProject = feature.properties.projects.join('').includes(this.filters.villagesSelection);
           
@@ -165,7 +164,7 @@ export default {
           else includedDistrict = feature.properties.district.includes(this.filters.districtSelection)
           
           let includedActivity;
-          if (this.filters.activitySelection == 'all' || this.filters.activitySelection == '') includedActivity = true
+          if (this.filters.activitySelection == 'all') includedActivity = true
           else if
             (this.filters.activitySelection == 'with_infra'
               && (feature.properties['sls2'].infrastructure.type
@@ -181,7 +180,7 @@ export default {
             includedActivity = true
           else includedActivity = false
 
-          const villageAvailability = includedProject && includedDistrict && includedActivity;
+          let villageAvailability = includedProject && includedDistrict && includedActivity;
 
           return villageAvailability
         }
