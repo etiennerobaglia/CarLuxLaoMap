@@ -17,7 +17,7 @@
             {{project}}
           </span>
         </div>
-        <span class="panel-side-info"> Alt: {{village.geometry.coordinates[2]}}m </span>
+        <span class="panel-side-info"> Alt: {{village.properties.coordinates.alt}}m </span>
         <span class="panel-side-info"> {{village.properties.district}} District </span>
       </div>
     </header>
@@ -25,33 +25,33 @@
       :villageStats="village.properties.data"
     />
     <InfoDetails
-      v-if="
-        village.properties.projects.includes('DRR4')
-        && village.properties['drr4'].infrastructure.type"
-      :title="'DRR4 Infrastuctures'"
-      :details="village.properties['drr4'].infrastructure"
-      :showDetails="false"
-    />
-    <InfoDetails
-      v-if="village.properties.baseline_strategy.distance_to_province_capital"
       :title="'Baseline Strategy'"
+      v-if="village.properties.baseline_strategy.distance_to_province_capital"
       :details="village.properties.baseline_strategy"
       :showDetails="false"
     />
     <InfoDetails
+      :title="'DRR4 Infrastuctures'"
+      v-if="
+        village.properties.projects.includes('DRR4')
+        && village.properties['drr4'].infrastructure.type"
+      :details="village.properties['drr4'].infrastructure"
+      :showDetails="false"
+    />
+    <InfoDetails
+      :title="'SLS2 Infrastuctures'"
       v-if="
         village.properties.projects.includes('SLS2') 
         && village.properties['sls2'].infrastructure.type"
-      :title="'SLS2 Infrastuctures'"
       :details="village.properties['sls2'].infrastructure"
       :showDetails="false"
     />
     <InfoDetails
+      :title="'SLS2 Households Beneficiaries'"
       v-if="
         village.properties.projects.includes('SLS2')
-        && village.properties['sls2'].beneficiaries.weaving
+        && village.properties['sls2'].beneficiaries.fish_raising
       "
-      :title="'SLS2 Beneficiaries'"
       :details="village.properties['sls2'].beneficiaries"
       :showDetails="false"
     />
@@ -86,7 +86,6 @@ export default {
     display: flex;
     align-items: stretch;
     justify-content: space-between;
-    margin-bottom: 1.75rem;
   }
   .panel-name {
   }

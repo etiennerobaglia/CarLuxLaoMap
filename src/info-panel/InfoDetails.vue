@@ -2,13 +2,13 @@
   <section class="details">
     <header 
       class="details-header"
+      :class="{'details-header-active': showDetails}"
       @click="showDetails = !showDetails"
     >
       <h3 class="details-title">
         {{title}}
       </h3>
       <svg
-        :class="{ active: showDetails }"
         class="arrow"
         viewBox="0 0 24 24"
       >
@@ -26,9 +26,15 @@
       >
         <div
           class="detail-item-simple"
-          v-if="typeof value !== 'object' && value"
+          v-if="
+            typeof value !== 'object' 
+            && value !== null
+            && value !== ''
+            && value !== 'NA'"
         >
-          <span>{{name}}: </span>
+          <span class="detail-name">
+            {{name.toString().split('_').join(' ')}}: 
+          </span>
           <span class="detail-value">{{value}}</span>
         </div>
       </div>
@@ -37,25 +43,33 @@
         v-for="(value, name) in details"
         :key="name"
         class="detail-item"
+        v-show="typeof value === 'object' && value != null"
       >
-        <table
-          v-if="typeof value == 'object'"
-          class="detail-item-table"
+        <span class="detail-name detail-item-list-title">
+          {{name.toString().split('_').join(' ')}}:
+        </span>
+        <ul 
+          class="detail-item-list"
         >
-          <thead class="detail-item-table-title">
-            <th colspan=2>{{name}}</th>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(rowValue, rowName) in value"
-              :key="rowName"
-              v-show="rowValue"
-            >
-              <td>{{rowName}}</td>
-              <td class="detail-item-table-value">{{rowValue}}</td>
-            </tr>
-          </tbody>
-        </table>
+          <div
+            v-for="(rowValue, rowName) in value"
+            :key="rowName"
+            v-show="
+            typeof rowValue !== 'object' 
+            && rowValue !== null
+            && rowValue !== ''
+            && value !== 'NA'"
+          >
+            <li class="detail-item-list-pair">
+              <span class="detail-item-list-name">
+                {{rowName.toString()
+                    .split('nb').join('N° of')
+                    .split('_').join(' ')}}
+              </span>
+              <span class="detail-item-list-value">{{rowValue}}</span>
+            </li>
+          </div>
+        </ul>
       </div>
     </div>
   </section>
@@ -69,65 +83,7 @@ export default {
     details: Object,
     showDetails: Boolean,
   },
-  // data() {
-  //   return{
-  //   }
-  // }
-  computed: {
-    // simpleDetails() {
-    //   let simpleDetails = [];
-    //   for (const propertyName in this.details) {
-    //     if (Object.hasOwnProperty.call(this.details, propertyName)) {
-    //       const propertyValue = this.details[propertyName];
-    //       const property = {
-    //         name: propertyName,
-    //         value: propertyValue
-    //       }
-    //       if (typeof propertyValue != 'object') simpleDetails.push(property)
-    //     }
-    //   }
-    //   return simpleDetails
-    // },
-    // objectDetails() {
-    //   let objectDetails = [];
-    //   for (const propertyName in this.details) {
-    //     if (Object.hasOwnProperty.call(this.details, propertyName)) {
-    //       const propertyValue = this.details[propertyName];
-    //       if (typeof propertyValue == 'object') {
-    //         const property = {
-    //           name: propertyName,
-    //           value: []
-    //         }
-    //         for (const nestedPropertyName in propertyValue) {
-    //           if (Object.hasOwnProperty.call(propertyValue, nestedPropertyName)) {
-    //             const nestedPropertyValue = propertyValue[nestedPropertyName];
-                
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-      // return objectDetails
-    // }
-  },
-  methods: {
-
-  }
 }
-// function objectToArray(object){
-//   let array = [];
-//   for (const propertyName in object) {
-//     if (Object.hasOwnProperty.call(object, propertyName)) {
-//       const propertyValue = object[propertyName];
-//       const property = {
-//         name: propertyName,
-//         value: propertyValue
-//       }
-//       array.push(property)
-//     }
-//   }
-//   return array
-// }
 
 </script>
 
@@ -146,19 +102,26 @@ export default {
     cursor: pointer;
     padding: .625rem .075rem;
   }
+
+  .details-header-active{
+    color: #D92E40;
+  }
+
   .details-title {
-    font-size: .875rem;
-    font-weight: 500;
+    font-size: .95rem;
+    font-weight: 600;
   }
 
   .details-content {
-    margin-bottom: 1rem;
-    font-size: .85rem;
+    margin: 0 .6rem 1.25rem;
+    font-size: .8rem;
   }
 
-  .arrow.active {
+  .details-header-active .arrow {
     transform: rotate(-180deg);
+    fill: #D92E40
   }
+
   .arrow {
     height: 1.25rem;
     display: block;
@@ -166,21 +129,41 @@ export default {
     fill: rgb(56, 56, 56)
   }
 
-  .detail-item-table {
-    border: 1px solid black;
-    width: 100%;
-    margin: .5rem;
-    border-radius: 3px;
+  .detail-item:not(:last-of-type) {
+    margin-bottom: .1rem;
   }
 
-  .detail-item-table-title {
-    border-bottom: 1px solid black;
-    background: whitesmoke;
-    width: 100%;
+  .detail-item-simple {
+    display: flex;
+    justify-content: space-between;
   }
 
-  .detail-item-table-value {
+  .detail-name {
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .detail-value {
     text-align: right;
-    border-left: 1px solid grey
   }
+
+  .detail-item-list {
+    margin: 0 20% 0 6%;
+    border-left: 1px solid darkgrey;
+    padding-left: 3%;
+  }
+
+  .detail-item-list-title {
+  }
+
+  .detail-item-list-pair {
+    display: flex;
+    justify-content: space-between;
+    font-size: .7rem;
+  } 
+
+  .detail-item-list-name {
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
 </style>
