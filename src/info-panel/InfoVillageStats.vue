@@ -1,10 +1,10 @@
 <template>
   <div class="village-stats">
     <div class="village-stats-text">
-      <!-- <div class="village-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, eveniet impedit.</div> -->
+      <div class="village-stats-tooltip">Data source:<br> Project MoU</div>
       <div>
         <div><strong>Population: </strong> {{villageStats.mou.population}}</div>
-        <div><strong>Housholds: </strong> {{villageStats.mou.household}}</div>
+        <div><strong>Households: </strong> {{villageStats.mou.household}}</div>
       </div>
       <div class="village-stat-right">
         <div class="village-stat-right-info"><strong>Females: </strong> {{villageStats.mou.women}} ({{womenRatioRounded}} %)</div>
@@ -18,7 +18,7 @@
         :width="100"
       />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -49,21 +49,11 @@ export default {
       let datasets = [
           {
             backgroundColor: [
-              // '#d92e40',
-              // '#e66968',
-              // '#ef9792',
-              // '#f2c3bf',
-              // '#eeeeee',
-'#003f5c',
-'#34457d',
-'#783f87',
-'#b62a71',
-'#d92e40',
-// '#bf001a',
-// '#d3483c',
-// '#e47160',
-// '#f39787',
-// '#ffbcaf',
+              '#003f5c',
+              '#34457d',
+              '#783f87',
+              '#b62a71',
+              '#d92e40',
             ],
             data: [],
           }
@@ -87,15 +77,39 @@ export default {
 <style scoped>
 .village-stats {
   justify-content: space-between;
-  margin-bottom: 1.5rem;
   align-items: center;
+  margin: .75rem .25rem 1.5rem;
 }
+
 .village-stats-text {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   align-items: center;
   justify-content: space-between;
   display: flex;
   font-size: .85rem;
+  cursor: help;
+  position: relative;
+}
+
+.village-stats-tooltip {
+  position: absolute;
+  top: -42.5px;
+  background: rgb(70, 70, 70);
+  color: white;
+  border-radius: 3px;
+  display: none;
+  font-weight: 600;
+  padding: .1rem .3rem;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 100px;
+}
+
+.village-stats-text:hover .village-stats-tooltip {
+  display: block;
 }
 
 .village-stat-right {
@@ -104,8 +118,5 @@ export default {
 .village-stat-right-info {
   text-align: inherit;
 }
-
-.village-stats-population{
-} 
 
 </style>

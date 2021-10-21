@@ -13,7 +13,7 @@ export default {
         maintainAspectRatio: false,
         title: {
           display: true,
-          text: 'Ethnic group',
+          text: 'Ethnic group (MoU)',
           position: 'left'
         },
         legend: {
