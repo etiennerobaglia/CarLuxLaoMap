@@ -1,13 +1,19 @@
 <template>
   <section class="details">
-    <header 
+    <header
       class="details-header"
       :class="{'details-header-active': showDetails}"
       @click="showDetails = !showDetails"
     >
-      <h3 class="details-title">
-        {{title}}
-      </h3>
+      <div class="details-title-container">
+        <img
+          v-if="icon"
+          class="details-title-icon"
+          src="../assets/icons/bridge.png"/>
+        <h3 class="details-title">
+          {{title}}
+        </h3>
+      </div>
       <svg
         class="arrow"
         viewBox="0 0 24 24"
@@ -43,7 +49,11 @@
         v-for="(value, name) in details"
         :key="name"
         class="detail-item"
-        v-show="typeof value === 'object' && value != null"
+        v-show="
+          typeof value === 'object' 
+          && value != undefined 
+          && value != null
+          && Object.keys(value).length"
       >
         <span class="detail-name detail-item-list-title">
           {{name.toString().split('_').join(' ')}}:
@@ -58,7 +68,7 @@
             typeof rowValue !== 'object' 
             && rowValue !== null
             && rowValue !== ''
-            && value !== 'NA'"
+            && rowValue !== 'NA'"
           >
             <li class="detail-item-list-pair">
               <span class="detail-item-list-name">
@@ -80,6 +90,7 @@ export default {
   name: 'InfoDetails',
   props: {
     title: String,
+    icon: String,
     details: Object,
     showDetails: Boolean,
   },
@@ -101,12 +112,22 @@ export default {
     justify-content: space-between;
     cursor: pointer;
     padding: .625rem .075rem;
+    height: 2.5rem;
   }
 
   .details-header-active{
     color: #D92E40;
   }
 
+  .details-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .details-title-icon {
+    height: 1.75rem;
+    margin: 0 .5rem 0 .3rem
+  }
   .details-title {
     font-size: .95rem;
     font-weight: 600;
@@ -141,9 +162,10 @@ export default {
   .detail-name {
     font-weight: 600;
     text-transform: capitalize;
+    margin-right: .5rem;
   }
   .detail-value {
-    text-align: right;
+    text-align: justify;
   }
 
   .detail-item-list {

@@ -17,7 +17,7 @@
             {{project}}
           </span>
         </div>
-        <span class="panel-side-info"> Alt: {{village.properties.coordinates.alt}}m </span>
+        <span class="panel-side-info"> Alt: {{village.properties.town.geometry.coordinates[2]}}m </span>
         <span class="panel-side-info"> {{village.properties.district}} District </span>
       </div>
     </header>
@@ -26,8 +26,8 @@
     />
     <InfoDetails
       :title="'Baseline Strategy'"
-      v-if="village.properties.baseline_strategy.distance_to_province_capital"
-      :details="village.properties.baseline_strategy"
+      v-if="village.properties['baseline_strategy'].population.total"
+      :details="village.properties['baseline_strategy']"
       :showDetails="false"
     />
     <InfoDetails
@@ -40,6 +40,7 @@
     />
     <InfoDetails
       :title="'SLS2 Infrastuctures'"
+      :icon="village.properties['sls2'].infrastructure.type"
       v-if="
         village.properties.projects.includes('SLS2') 
         && village.properties['sls2'].infrastructure.type"
