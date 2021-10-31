@@ -3,6 +3,9 @@
 .leaflet-tooltip::before {
   display: none;
 }
+.leaflet-tooltip div {
+  padding: 0 .175rem
+}
 .leaflet-tooltip {
   border: none;
   font-size: .75rem;
@@ -16,6 +19,23 @@
 }
 
 .village-label {
+  color: black;
+  background: #fffffff6;
+  text-shadow: none;
+  border-radius: 4px;
+  padding: 0;
+  margin: 3px;
+}
+.village-label {
+  color: black;
+  background: #fffffff6;
+  text-shadow: none;
+  border-radius: 4px;
+  padding: 0;
+  margin: 3px;
+}
+
+.village-label-drr-sls {
   color: #5d3200;
   background: #fffffff6;
   text-shadow: none;
@@ -23,8 +43,30 @@
   padding: 0;
   margin: 3px;
 }
+.village-label-sls {
+  color: #240856;
+  background: #fffffff6;
+  text-shadow: none;
+  border-radius: 4px;
+  padding: 0;
+  margin: 3px;
+}
+.village-label-drr {
+  color: #134a1d;
+  background: #fffffff6;
+  text-shadow: none;
+  border-radius: 4px;
+  padding: 0;
+  margin: 3px;
+}
+
 .tooltip-city {
-  font-size: .55rem;
+  color: black;
+  background: #fffffff6;
+  text-shadow: none;
+  border-radius: 4px;
+  padding: 0;
+  margin: 3px;
 }
 
 .tooltip-town {
