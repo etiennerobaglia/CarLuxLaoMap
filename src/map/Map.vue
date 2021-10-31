@@ -6,6 +6,7 @@
       <span v-if="false" > Bounds: {{bounds}}</span>
       <span v-if="false" > --- Coordinates: {{clickCoordinates}}</span>
       <span v-if="false" >  village: {{village}}</span>
+      <span v-if="false" >  tile: {{currentTile}}</span>
     </div>
     <l-map
       class="map"
@@ -98,7 +99,7 @@ export default {
         {
           url: '',
           attribution: '',
-          name: 'Blank',
+          name: 'None',
           visible: true,
         },
       ],
@@ -107,7 +108,6 @@ export default {
       },
       zoom: 8,
       center: [18.280, 103.9],
-      // bounds: [[], []],
       clickCoordinates: String,
     };
   },
@@ -120,21 +120,6 @@ export default {
       if (this.filters.districtSelection == "all") return [[20.24158281954221, 102.8759765625], [19.16592425362802, 104.19433593750001]]
       else return false
     },
-    // clickCoordinates() {
-    //   var clickCoordinates = 'test';
-    //   if (this.map) {
-    //     this.map.on('click', function(e){
-    //       var coord = e.latlng;
-    //       var lat = coord.lat;
-    //       var lng = coord.lng;
-    //       let coordinates =  lat + ", " + lng;
-    //       console.log(coordinates);
-    //       clickCoordinates = 'test';
-    //     });
-    //     return clickCoordinates;
-    //   }
-    //   else return 'false'
-    // }
   },
   methods: {
     zoomUpdated (zoom) {
@@ -147,10 +132,6 @@ export default {
       let coordinates =  lat + ", " + lng;
       this.clickCoordinates = coordinates;
     }
-    // fitArea() {
-    //   // if (district == "Phaxai") 
-    //   this.bounds = 
-    // },
   },
   props: {
     filters: {

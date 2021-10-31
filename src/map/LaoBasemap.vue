@@ -20,6 +20,8 @@
           permanent: false,
           direction: 'auto',
           interactive: false,
+          className: 'village-label',
+          offset: [8, -7]
         }"
       >
         {{feature.properties['name:en']}}
@@ -167,13 +169,6 @@ export default {
           layer.setStyle({
             fillColor: this.$mapStyleRed,
           })
-          // .bindTooltip(
-          //   feature.properties['ADM2_EN'],
-          //   {
-          //     permanent: true,
-          //     direction: 'auto',
-          //     className: 'tooltip-town'
-          //   })
       }
       else if (feature.properties.ADM1_EN == 'Houaphan' 
           || feature.properties.ADM1_EN == 'Xiengkhouang') {
@@ -181,13 +176,6 @@ export default {
           .setStyle({
             fillColor: this.$mapStyleDarkGrey,
           })
-          // .bindTooltip(
-          //   feature.properties['ADM2_EN'],
-          //   {
-          //     permanent: true,
-          //     direction: 'auto',
-          //     className: 'tooltip-town'
-          //   })
       }
       else {
         layer.setStyle({
