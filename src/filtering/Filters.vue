@@ -1,8 +1,21 @@
 <template>
   <nav class="side-panel-content filters">
+
+    <FilterSelect
+      :title="'Villages'"
+      :name="'villageSelection'"
+      :options="villages"
+      :defaultValue="'Select Village'"
+      @villageSelection="selection => {
+        filters.villageSelection = selection;
+      }"
+
+      :multiple='true'
+      :label="'properties.key'"
+    />
     <FilterSelect
       :title="'Projects'"
-      :name="'villagesSelection'"
+      :name="'projectSelection'"
       :defaultValue="'Select Project'"
       :options="[
         { value: 'all', name: 'All Villages'},
@@ -10,8 +23,8 @@
         { value: 'DRR4', name: 'DRR4'},
         { value: 'baseline', name: 'Baseline Strategy'}
       ]"
-      @villagesSelection="selection => {
-        filters.villagesSelection = selection;
+      @projectSelection="selection => {
+        filters.projectSelection = selection;
       }"
     />
     <FilterSelect
@@ -64,6 +77,22 @@
 <script>
 import Toggle from './Toggle.vue';
 import FilterSelect from './FilterSelect.vue';
+import villageAreaAndDotData from '../assets/village-area-dot-data';
+
+let villages = [];
+
+villageAreaAndDotData.features.forEach(village => {
+  
+  villages.push(village.properties.key
+    // {
+    // key: village.properties.key,
+    // name: village.properties['name-mou-english'],
+    // district: village.properties['district'],
+  // }
+  )
+});
+
+console.log()
 
 export default {
   name: 'Filters',
@@ -74,12 +103,15 @@ export default {
   data() {
     return {
       filters: {
-        villagesSelection: String,
+        villageSelection: String,
         districtSelection: String,
         activitySelection: String,
+        projectSelection: String,
         displayVillageName: Boolean,
         displayVillageArea: Boolean,
       },
+      villageAreaAndDotData,
+      villages,
     };
   },
   created() {
