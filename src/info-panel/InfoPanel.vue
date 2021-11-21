@@ -31,7 +31,7 @@
       :showDetails="false"
     />
     <InfoDetails
-      :title="'DRR4 Infrastuctures'"
+      :title="'DRR4 '+ infrastructureName(village.properties['drr4'].infrastructure.type)"
       v-if="
         village.properties.projects.includes('DRR4')
         && village.properties['drr4'].infrastructure.type"
@@ -39,8 +39,7 @@
       :showDetails="false"
     />
     <InfoDetails
-      :title="'SLS2 Infrastuctures'"
-      :icon="village.properties['sls2'].infrastructure.type"
+      :title="'SLS2 '+ infrastructureName(village.properties['sls2'].infrastructure.type)"
       v-if="
         village.properties.projects.includes('SLS2') 
         && village.properties['sls2'].infrastructure.type"
@@ -77,6 +76,14 @@ export default {
       displaySLS2Beneficiaries: false,
     }
   },
+  methods: {
+    infrastructureName(longTypeName) {
+      if (longTypeName.includes('Box Culvert')) return 'Box Culvert'
+      if (longTypeName.includes('ridge')) return 'Bridge'
+      if (longTypeName.includes('Wire construction')) return 'Irrigation System'
+      if (longTypeName.includes('Road')) return 'Road'
+    },
+  }
 };
 </script>
 
@@ -112,8 +119,5 @@ export default {
     font-size: inherit;
     text-align: right;
   }
-  .panel-description {
-    font-size: .85rem;
-    margin-block: 1.75rem;
-  }
+
 </style>

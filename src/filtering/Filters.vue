@@ -9,7 +9,6 @@
       @villageSelection="selection => {
         filters.villageSelection = selection;
       }"
-
       :multiple='true'
       :label="'properties.key'"
     />
@@ -21,7 +20,6 @@
         { value: 'all', name: 'All Villages'},
         { value: 'SLS2', name: 'SLS2'},
         { value: 'DRR4', name: 'DRR4'},
-        { value: 'baseline', name: 'Baseline Strategy'}
       ]"
       @projectSelection="selection => {
         filters.projectSelection = selection;
@@ -33,10 +31,10 @@
       :defaultValue="'Select District'"
       :options="[
         { value: 'all', name: 'All Districts'},
-        { value: 'Phaxay', name: 'Phaxai'},
+        { value: 'Phaxay', name: 'Phaxay'},
         { value: 'Kham', name: 'Kham'},
-        { value: 'Houameang', name: 'Huamuang'},
-        { value: 'Nonghet', name: 'Nonghet'}
+        { value: 'Houameang', name: 'Huameuang'},
+        { value: 'Nonghet', name: 'Nonghed'}
       ]"
       @districtSelection="selection => {
         filters.districtSelection = selection;
@@ -48,15 +46,20 @@
       :defaultValue="'Select Activity'"
       :options="[
         { value: 'all', name: 'All Villages'},
-        { value: 'with_infra', name: 'With Infrastructure'},
-        { value: 'without_infra', name: 'Without Infrastructure'},
+        { value: 'baseline', name: 'Baseline Strategy'},
+        { value: 'with_infra', name: 'Infra. All'},
+        { value: 'infra_bridge', name: 'Infra. Bridge'},
+        { value: 'infra_box_culvert', name: 'Infra. Box Culvert'},
+        { value: 'infra_wire_constuction', name: 'Infra. Irrigation'},
+        { value: 'infra_road', name: 'Infra. Road'},
+
       ]"
       @activitySelection="selection => {
         filters.activitySelection = selection;
       }"
     />
     <Toggle
-      :title="'Village Names'"
+      :title="'Names'"
       :name="'displayVillageName'"
       :defaultValue="false"
       @displayVillageName="status => {
@@ -64,7 +67,7 @@
       }"
     />
     <Toggle
-      :title="'Village Area'"
+      :title="'Areas'"
       :name="'displayVillageArea'"
       :defaultValue="false"
       @displayVillageArea="status => {
@@ -82,14 +85,7 @@ import villageAreaAndDotData from '../assets/village-area-dot-data';
 let villages = [];
 
 villageAreaAndDotData.features.forEach(village => {
-  
-  villages.push(village.properties.key
-    // {
-    // key: village.properties.key,
-    // name: village.properties['name-mou-english'],
-    // district: village.properties['district'],
-  // }
-  )
+  villages.push(village.properties.key)
 });
 
 console.log()
