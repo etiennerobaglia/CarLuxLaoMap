@@ -8,9 +8,7 @@
     v-for="feature in filteredVillages"
     :key="feature.properties.key"
     :ref="feature.properties.key"
-    @click="
-      $emit('village', feature);
-      clickedVillage = feature.properties.key"
+    @click="handleVillageClick(feature)"
     @mouseover="overedVillage = feature.properties.key"
     @mouseout="overedVillage = null"
   >
@@ -47,11 +45,11 @@
       :visible="displayVillagesArea"
       :lat-lng="[feature.properties.town.geometry.coordinates[1], feature.properties.town.geometry.coordinates[0]]"
       :stroke="true"
-      :weight="selectedVillage(feature.properties.key) ? 1.75 : 1.25"
+      :weight="selectedVillage(feature.properties.key) ? 2 : 1.25"
       :color="'white'"
       :opacity="1"
       :fillOpacity="1"
-      :radius="selectedVillage(feature.properties.key) ? 4.5 : 3.5"
+      :radius="selectedVillage(feature.properties.key) ? 5 : 3.5"
       :fillColor="villageColor(feature.properties.projects)"
       :options="{interactive: false,}"
     >
@@ -127,8 +125,8 @@ export default {
         direction: 'auto',
       },
       villages: villageAreaAndDotData,
-      overedVillage: -1,
-      clickedVillage: -1,
+      overedVillage: null,
+      clickedVillage: null,
       latLngVillagesArea,
       tooltipclassName: 'village-label',
     };
@@ -151,7 +149,7 @@ export default {
     filteredVillages() {
       return this.villages.features.filter(
         (feature) => {
-
+          
           let includedVillage;
           if (this.filters.villageSelection == null) includedVillage = true;
           else
@@ -161,8 +159,6 @@ export default {
           
           let includedProject;
           if (this.filters.projectSelection == 'all') includedProject = true;
-          else if (this.filters.projectSelection == 'baseline') 
-              includedProject = !!feature.properties['baseline_strategy'].population.total
           else includedProject = feature.properties.projects.join('').includes(this.filters.projectSelection);
           
           let includedDistrict;
@@ -171,6 +167,10 @@ export default {
           
           let includedActivity;
           if (this.filters.activitySelection == 'all') includedActivity = true
+          else if 
+            (this.filters.activitySelection == 'baseline'
+              && !!feature.properties['baseline_strategy'].population.total) 
+            includedActivity = true
           else if
             (this.filters.activitySelection == 'with_infra'
               && (feature.properties['sls2'].infrastructure.type
@@ -179,9 +179,42 @@ export default {
             includedActivity = true
           else if
             (
-              this.filters.activitySelection == 'without_infra'
-              && !(feature.properties['sls2'].infrastructure.type
-              || feature.properties['drr4'].infrastructure.type)
+              this.filters.activitySelection == 'infra_bridge'
+              && (
+               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('ridge'))
+               || 
+               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('ridge'))
+              )
+            )
+            includedActivity = true
+          else if
+            (
+              this.filters.activitySelection == 'infra_box_culvert'
+              && (
+               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Box Culvert'))
+               || 
+               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Box Culvert'))
+              )
+            )
+            includedActivity = true
+          else if
+            (
+              this.filters.activitySelection == 'infra_wire_constuction'
+              && (
+               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Wire construction'))
+               || 
+               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Wire construction'))
+              )
+            )
+            includedActivity = true
+          else if
+            (
+              this.filters.activitySelection == 'infra_road'
+              && (
+               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Road'))
+               || 
+               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Road'))
+              )
             )
             includedActivity = true
           else includedActivity = false
@@ -202,6 +235,16 @@ export default {
     },
   },
   methods: {
+    handleVillageClick(feature){
+      if (this.clickedVillage != feature.properties.key) {
+        this.$emit('village', feature)
+        this.clickedVillage = feature.properties.key
+      }
+      else {
+        this.$emit('village', {});
+        this.clickedVillage = null
+      }
+    },
     selectedVillage(key) {
       if (key == this.overedVillage || key == this.clickedVillage) return true
       else return false

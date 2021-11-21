@@ -32,6 +32,10 @@
       <l-control-layers
         position="topleft"
       />
+      <l-control-attribution 
+        position="bottomleft"
+        prefix="&copy; Village Data 15/11/2021">
+      </l-control-attribution>
       <l-tile-layer
         v-for="tileProvider in tileProviders"
         :key="tileProvider.name"
@@ -55,7 +59,7 @@
 
 <script>
 import {
-  LMap, LTileLayer, LControlScale, LControlLayers,
+  LMap, LTileLayer, LControlScale, LControlLayers, LControlAttribution
 } from 'vue2-leaflet';
 // import L from 'leaflet';
 import Villages from './Villages.vue';
@@ -68,6 +72,7 @@ export default {
     LTileLayer,
     LControlScale,
     LControlLayers,
+    LControlAttribution,
     Villages,
     LaoBasemap,
   },

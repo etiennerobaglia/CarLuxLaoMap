@@ -48,8 +48,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.checkbox:not(:last-of-type) {
   margin-bottom: .75rem;
-  padding-top: .25rem;
 }
 .checkbox input {
   margin-right: 4.5rem;

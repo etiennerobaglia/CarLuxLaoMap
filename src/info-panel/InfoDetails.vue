@@ -6,10 +6,6 @@
       @click="showDetails = !showDetails"
     >
       <div class="details-title-container">
-        <img
-          v-if="icon"
-          class="details-title-icon"
-          src="../assets/icons/bridge.png"/>
         <h3 class="details-title">
           {{title}}
         </h3>
@@ -93,7 +89,7 @@ export default {
     icon: String,
     details: Object,
     showDetails: Boolean,
-  },
+  }
 }
 
 </script>

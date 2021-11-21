@@ -165,6 +165,7 @@ export default {
 
 .dropdown-container-active .select-reset-icon {
   display: block;
+  padding-top: 2px
 }
 
 .dropdown-container-active .select-reset  {

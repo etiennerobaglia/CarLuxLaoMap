@@ -18,9 +18,9 @@
   text-shadow: 0 1px 2px #ffffff;
 }
 
-.village-label {
-  color: black;
-  background: #fffffff6;
+.district-label {
+  color: white;
+  background: #3f3f3ff6;
   text-shadow: none;
   border-radius: 4px;
   padding: 0;

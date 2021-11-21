@@ -87,10 +87,10 @@
       :name="'LaoPDRDistricts'"
       :geojson="LaoPDRDistricts"
       :options="{
-        interactive: false,
         color: $mapStyleWhite,
         weight: 1,
-        onEachFeature: (feature, layer) => onEachFeatureDistrict(feature, layer)
+        onEachFeature: (feature, layer) => onEachFeatureDistrict(feature, layer),
+        interactive: true,
       }"
     />
     <l-geo-json
@@ -115,7 +115,6 @@ import {
   LIcon,
   LTooltip,
 } from 'vue2-leaflet';
-import L from 'leaflet';
 
 import XhkHpnPrimaryRoads from '../assets/xhk_hpn-primary_roads';
 import XhkHpnSecondaryRoads from '../assets/xhk_hpn-secondary_roads';
@@ -168,7 +167,17 @@ export default {
       if (this.$interventionDistricts.includes(feature.properties.ADM2_EN)) {
           layer.setStyle({
             fillColor: this.$mapStyleRed,
+            // color: this.$mapStyleRed,
           })
+          .bindTooltip(
+            feature.properties['ADM2_EN'],
+            {
+              permanent: true,
+              direction: 'auto',
+              interactive: false,
+              // className: 'district-label',
+              // offset: [8, -7]
+            })
       }
       else if (feature.properties.ADM1_EN == 'Houaphan' 
           || feature.properties.ADM1_EN == 'Xiengkhouang') {
@@ -176,112 +185,20 @@ export default {
           .setStyle({
             fillColor: this.$mapStyleDarkGrey,
           })
+          // .bindTooltip(
+          //   feature.properties['ADM2_EN'],
+          //   {
+          //     permanent: false,
+          //     direction: 'auto',
+          //     interactive: false,
+          //     className: 'district-label',
+          //     // offset: [8, -7]
+          //   })
       }
       else {
         layer.setStyle({
           fillColor: this.$mapStyleLightGrey,
         })
-      }
-    },
-    geojsonOptions(geojson) {
-      switch (geojson.name) {
-        case 'xhk_hpn-rivers':
-          return {
-            color: this.$mapStyleWaterColor,
-            weight: .7,
-            interactive: false,
-          }
-        case 'phaxay-lake':
-          return {
-            fillColor: this.$mapStyleWaterColor,
-            opacity: 0,
-            fillOpacity: 1,
-          }
-        case 'lao_pdr-districts':
-          return {
-            interactive: false,
-            color: this.$mapStyleWhite,
-            weight: 1,
-            onEachFeature: (feature, layer) => {
-              if (this.$interventionDistricts.includes(feature.properties.ADM2_EN)) {
-                  layer.setStyle({
-                    fillColor: this.$mapStyleRed,
-                  }).bindTooltip(
-                    feature.properties['ADM2_EN'],
-                    {
-                      permanent: true,
-                      direction: 'auto',
-                      className: 'tooltip-town'
-                    })
-              }
-              else if (feature.properties.ADM1_EN == 'Houaphan' 
-                  || feature.properties.ADM1_EN == 'Xiengkhouang') {
-                  layer
-                  .setStyle({
-                    fillColor: this.$mapStyleDarkGrey,
-                  })
-                  .bindTooltip(
-                    feature.properties['ADM2_EN'],
-                    {
-                      permanent: true,
-                      direction: 'auto',
-                      className: 'tooltip-town'
-                    })
-              }
-              else {
-                layer.setStyle({
-                  fillColor: this.$mapStyleLightGrey,
-                })
-              }
-            }
-          }
-        
-        case 'xhk_hpn-primary_roads':
-          return {
-            color: this.$mapStyleRoadsColor,
-            weight: .7,
-            interactive: false,
-          }
-        case 'xhk_hpn-secondary_roads':
-          return {
-            color: this.$mapStyleRoadsColor,
-            weight: .7,
-            interactive: false,
-          }
-        case 'xhk_hpn-main-towns':
-          return {
-            pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
-              opacity: 0,
-              fillColor: this.$mapStyleBlack,
-              fillOpacity: 1,
-              radius: 4.5,
-              weight: 1,
-            })
-            .bindTooltip(feature.properties['name:en'], {
-              permanent: false,
-              direction: 'auto',
-              className: 'tooltip-town'
-            })
-          }
-        case 'xhk_hpn_vte-cities':
-          return {
-            pointToLayer: (feature, latlng) => 
-              L
-              .circleMarker(latlng, {
-                opacity: 0,
-                fillColor: this.$mapStyleBlack,
-                fillOpacity: 1,
-                radius: 4,
-                weight: 1,
-              })
-              .bindTooltip(feature.properties['name:en'], {
-                permanent: true,
-                direction: 'auto',
-                className: 'tooltip-city'
-              })
-          }
-        default:
-          return;
       }
     },
   },
