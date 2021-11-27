@@ -2,8 +2,30 @@
   <div id="app-root">
     <div class="logo-container">
     </div>
+    <div class="overlay loading-overlay" v-if="!isAppLoaded">
+      <div class="loader">Loading...</div>
+      <div class="logo-container">
+      </div>
+    </div>
+    <div class="overlay login-overlay" v-if="!isSignedIn">
+      <div class="login-dialbox">
+        <h2>Log In</h2>
+        <button @click="login()">
+            SIGN IN
+        </button>
+        <br>
+        <button @click="testGAPIRequest()">
+            TEST GAPI REQUEST
+        </button>
+      </div>
+    </div>
     <div class="side-panel">
-      <div 
+    <div class="logout-button">
+      <button @click="logout()" v-if="isSignedIn">
+          Log Out
+      </button>
+    </div>
+      <div
         class="side-panel-filters"
       >
         <div 
@@ -55,10 +77,26 @@
 
 <script>
 
+function csvtoJson(input) {
+  csv({
+    ignoreEmpty: true,
+    checkType: true,
+    colParser:{
+      'geometry.coordinates': function(value) {
+        return JSON.parse(value)
+      },
+    }
+  })
+    .fromString(input)
+    .then((csvRow)=>{ 
+        console.log(csvRow)
+    })
+}
+
 import Map from './map/Map.vue';
 import InfoPanel from './info-panel/InfoPanel.vue';
 import Filters from './filtering/Filters.vue';
-
+import * as csv from "csvtojson";
 
 export default {
   name: 'App',
@@ -69,11 +107,24 @@ export default {
   },
   data() {
     return {
+      isAppLoaded: false,
+      isSignedIn: null,
       filters: Object,
       village: null,
       displayFilter: true,
       displayPanel: true,
+      villagesDatabase: null,
     };
+  },
+   created() {
+     // Subscribe to authentication status changes
+    this.$gapi.listenUserSignIn((isSignedIn) => {
+      this.isSignedIn = isSignedIn
+      this.isAppLoaded = true;
+    })
+    if(this.isSignedIn) {
+      this.loadVillageDatabase();
+    }
   },
   methods: {
     updatesFilters(emittedFilters) {
@@ -81,10 +132,42 @@ export default {
     },
     updatesVillage(emittedVillage) {
       this.village = emittedVillage;
+    },
+    login() {
+      this.$gapi.login()
+      // .then(({ currentUser, hasGrantedScopes }) => {
+      //   console.log({ currentUser, hasGrantedScopes })
+      // })
+      .then(this.loadVillageDatabase())
+    },
+    logout() {
+      this.$gapi.logout()
+    },
+    loadVillageDatabase() {
+      this.$gapi.getGapiClient().then( gapi =>
+          gapi.client.request({
+          'method': 'GET',
+          'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
+          'params': {
+            'mimeType': 'text/csv'
+          }
+        })
+        .execute(
+          function(response, responseur) {
+            if (response) {
+              this.signInError = true;
+            }
+            else {
+              var csv = JSON.parse(responseur).gapiRequest.data.body;
+              this.villagesDatabase = csvtoJson(csv);
+            }
+          }
+        )
+      )
     }
   },
   watch: { 
-    village: function(newVal) { // watch it
+    village: function(newVal) {
       if (window.matchMedia("(max-width: 990px)").matches) {
         if (newVal.properties)  {
           this.displayFilter = false;
@@ -114,6 +197,50 @@ export default {
   color: #3d3d3d;
 }
 
+/* LOADER */
+.loader,
+.loader:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+.loader {
+  margin: 60px auto;
+  font-size: 8px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-left: 1.1em solid #D22F3D;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+/* end LOADER */
+
 .logo-container {
   position: absolute;
   left: 8px;
@@ -124,6 +251,52 @@ export default {
   width: 100px;
   height: 75px;
   bottom: 12px;
+}
+
+.loading-overlay .logo-container {
+  position: relative;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 185px;
+  /* margin-top: 2rem; */
+}
+
+.overlay {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(255, 166, 166, 0.712);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-overlay {
+  background: white;
+  z-index:1100;
+  flex-direction: column;
+}
+
+.login-overlay {
+  z-index:1050;
+  background: rgba(255, 255, 255, 0.808);
+}
+.login-dialbox {
+  border: 3px solid #D22F3D;
+  background: white;
+  max-width: 100vw;
+  min-width: 200px;
+  width: 22.5vw;
+  height: 40vh;
+  height: 40vh;
+  max-height: 80vh;
+  padding: 3rem;
+}
+.logout-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
 }
 
 .side-panel {

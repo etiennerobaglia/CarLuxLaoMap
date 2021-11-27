@@ -2,10 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import 'leaflet/dist/leaflet.css';
 import './global.css';
+import VueGapi from 'vue-gapi'
 
 Vue.config.productionTip = false
 
-// map styling
+// styling
 Vue.prototype.$mapStyleBlack = 'rgb(34, 34, 34)'
 Vue.prototype.$mapStyleWhite = '#fff'
 Vue.prototype.$mapStyleLightGrey = '#afb1b3'
@@ -17,14 +18,19 @@ Vue.prototype.$mapStyleDRRVillageColor = '#522e96'
 Vue.prototype.$mapStyleWaterColor = 'rgba(58,136,232,1.0)'
 Vue.prototype.$mapStyleRoadsColor = '#bcbcbc'
 Vue.prototype.$interventionDistricts = ['Huameuang', 'Kham', 'Nonghed', 'Phaxay']
-
-
 Vue.prototype.$White = '#fff';
 Vue.prototype.$LightBlack = '#3b3b3b';
 Vue.prototype.$DarkRed = '#D22F3D';
 Vue.prototype.$MiddleRed = '#D92E40';
 Vue.prototype.$LightRed = '#f70f0f';
+// end styling
 
+Vue.use(VueGapi, {
+  // apiKey: '<YOUR_API_KEY>',
+  clientId: '230010715127-1ubbqmncfsh0p9kfq5ui3k21ir0s97un.apps.googleusercontent.com',
+  discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+  scope: ' https://www.googleapis.com/auth/drive.readonly',
+})
 new Vue({
   render: h => h(App),
 }).$mount('#app')
