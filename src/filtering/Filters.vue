@@ -2,9 +2,10 @@
   <nav class="side-panel-content filters">
 
     <FilterSelect
+      v-if="villagesDB"
       :title="'Villages'"
       :name="'villageSelection'"
-      :options="villages"
+      :options="villagesKeyList"
       :defaultValue="'Select Village'"
       @villageSelection="selection => {
         filters.villageSelection = selection;
@@ -80,15 +81,6 @@
 <script>
 import Toggle from './Toggle.vue';
 import FilterSelect from './FilterSelect.vue';
-import villageAreaAndDotData from '../assets/village-area-dot-data';
-
-let villages = [];
-
-villageAreaAndDotData.features.forEach(village => {
-  villages.push(village.properties.key)
-});
-
-console.log()
 
 export default {
   name: 'Filters',
@@ -106,9 +98,20 @@ export default {
         displayVillageName: Boolean,
         displayVillageArea: Boolean,
       },
-      villageAreaAndDotData,
-      villages,
     };
+  },
+  props: {
+    villagesDB: null,
+  },
+  computed: {
+    villagesKeyList() {
+      let keys = [];
+      this.villagesDB.forEach(village => {
+        keys.push(village.properties.key)
+      });
+      console.log(keys)
+      return keys;
+    }
   },
   created() {
     this.$emit('filters', this.filters);

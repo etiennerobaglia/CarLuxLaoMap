@@ -1,12 +1,13 @@
 <template>
   <section>
     <div v-if="false">
-      <span v-if="true" >Filters: {{filters}}</span>
+      <span v-if="false" >Filters: {{filters}}</span>
       <span v-if="false" > --- Zoom: {{zoom}}</span><br>
       <span v-if="false" > Bounds: {{bounds}}</span>
       <span v-if="false" > --- Coordinates: {{clickCoordinates}}</span>
       <span v-if="false" >  village: {{village}}</span>
       <span v-if="false" >  tile: {{currentTile}}</span>
+      <span v-if="true" >  vDB: {{villagesDB[0].type}}</span>
     </div>
     <l-map
       class="map"
@@ -48,6 +49,7 @@
         @village="village => $emit('village', village)"
         :filters="filters"
         :zoom="zoom"
+        :villages="villagesDB"
       />
       <LaoBasemap
         :zoom="zoom"
@@ -61,7 +63,6 @@
 import {
   LMap, LTileLayer, LControlScale, LControlLayers, LControlAttribution
 } from 'vue2-leaflet';
-// import L from 'leaflet';
 import Villages from './Villages.vue';
 import LaoBasemap from './LaoBasemap.vue';
 
@@ -119,11 +120,12 @@ export default {
   computed: {
     bounds(){
       if (this.filters.districtSelection == "Phaxay") return [[19.4795,102.8059], [19.1075,103.3951]]
-      if (this.filters.districtSelection == "Kham") return [[20.036579887949696, 103.34976196289064], [19.483423604156762, 103.88259887695314]]
-      if (this.filters.districtSelection == "Nonghet") return [[19.906218644480862, 103.60656738281251], [19.290405639497994, 104.2327880859375]]
-      if (this.filters.districtSelection == "Houameang") return [[20.342051676448612, 103.43902587890626], [19.791256751409104, 104.16961669921875]]
-      if (this.filters.districtSelection == "all") return [[20.24158281954221, 102.8759765625], [19.16592425362802, 104.19433593750001]]
-      else return false
+      else if (this.filters.districtSelection == "Kham") return [[20.036579887949696, 103.34976196289064], [19.483423604156762, 103.88259887695314]]
+      else if (this.filters.districtSelection == "Nonghet") return [[19.906218644480862, 103.60656738281251], [19.290405639497994, 104.2327880859375]]
+      else if (this.filters.districtSelection == "Houameang") return [[20.342051676448612, 103.43902587890626], [19.791256751409104, 104.16961669921875]]
+      // if (this.filters.districtSelection == "all") return [[20.24158281954221, 102.8759765625], [19.16592425362802, 104.19433593750001]]
+      // else return [[21.943,98.481],[14.435,108.040]] // laos full
+      else return [[20.24158281954221, 102.8759765625], [19.16592425362802, 104.19433593750001]] //xhk hpn
     },
   },
   methods: {
@@ -142,6 +144,7 @@ export default {
     filters: {
       required: true,
     },
+    villagesDB: null,
   },
   mounted () {
     this.$nextTick(() => {

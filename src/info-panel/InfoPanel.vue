@@ -22,38 +22,13 @@
       </div>
     </header>
     <InfoVillageStats
-      :villageStats="village.properties.data"
+      :villageStats="village.properties.mou"
     />
     <InfoDetails
-      :title="'Baseline Strategy'"
-      v-if="village.properties['baseline_strategy'].population.total"
-      :details="village.properties['baseline_strategy']"
-      :showDetails="false"
-    />
-    <InfoDetails
-      :title="'DRR4 '+ infrastructureName(village.properties['drr4'].infrastructure.type)"
-      v-if="
-        village.properties.projects.includes('DRR4')
-        && village.properties['drr4'].infrastructure.type"
-      :details="village.properties['drr4'].infrastructure"
-      :showDetails="false"
-    />
-    <InfoDetails
-      :title="'SLS2 '+ infrastructureName(village.properties['sls2'].infrastructure.type)"
-      v-if="
-        village.properties.projects.includes('SLS2') 
-        && village.properties['sls2'].infrastructure.type"
-      :details="village.properties['sls2'].infrastructure"
-      :showDetails="false"
-    />
-    <InfoDetails
-      :title="'SLS2 Households Beneficiaries'"
-      v-if="
-        village.properties.projects.includes('SLS2')
-        && village.properties['sls2'].beneficiaries.fish_raising
-      "
-      :details="village.properties['sls2'].beneficiaries"
-      :showDetails="false"
+      :key="name"
+      v-for="(value, name) in village.properties.data"
+      :title="name"
+      :details="value"
     />
   </aside>
 </template>

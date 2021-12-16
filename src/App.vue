@@ -7,24 +7,23 @@
       <div class="logo-container">
       </div>
     </div>
-    <div class="overlay login-overlay" v-if="!isSignedIn">
-      <div class="login-dialbox">
-        <h2>Log In</h2>
-        <button @click="login()">
-            SIGN IN
-        </button>
-        <br>
-        <button @click="testGAPIRequest()">
-            TEST GAPI REQUEST
-        </button>
-      </div>
+    <div class="overlay login-overlay" v-if="!isSignedIn && !villagesDB">
+      <div class="login-dialbox" @click="login()">
+        <div class="login-title">
+          <h2>
+            Click here to Log In
+          </h2>
+          <svg class="login-link-icon" viewBox="0 0 20 20">
+            <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
+          </svg>
+        </div>
+        <p>Privacy add-on could prevent signing in with Google. You should try to disable add-ons like Ghostery, Privacy Badger etc., on this website.</p>
+      </div> 
     </div>
     <div class="side-panel">
-    <div class="logout-button">
-      <button @click="logout()" v-if="isSignedIn">
-          Log Out
+      <button class="logout-button" @click="logout()" v-if="isSignedIn">
+           Log out {{userName}}.
       </button>
-    </div>
       <div
         class="side-panel-filters"
       >
@@ -43,6 +42,7 @@
         <Filters
           v-if="displayFilter"
           @filters="updatesFilters"
+          :villagesDB="villagesDB"
         />
       </div>
       <div 
@@ -68,30 +68,15 @@
         />
       </div>
     </div>
-    <Map 
+    <Map
       @village="updatesVillage"
       :filters="filters"
+      :villagesDB="villagesDB"
     />
     </div>
 </template>
 
 <script>
-
-function csvtoJson(input) {
-  csv({
-    ignoreEmpty: true,
-    checkType: true,
-    colParser:{
-      'geometry.coordinates': function(value) {
-        return JSON.parse(value)
-      },
-    }
-  })
-    .fromString(input)
-    .then((csvRow)=>{ 
-        console.log(csvRow)
-    })
-}
 
 import Map from './map/Map.vue';
 import InfoPanel from './info-panel/InfoPanel.vue';
@@ -109,22 +94,36 @@ export default {
     return {
       isAppLoaded: false,
       isSignedIn: null,
+      signInError: null,
       filters: Object,
       village: null,
       displayFilter: true,
       displayPanel: true,
-      villagesDatabase: null,
+      villagesDB: null,
     };
+  },
+  computed: {
+    userName() {
+      const user = this.$gapi.getUserData()
+      if (user) {
+          return user.fullName
+      } else {
+        return null;
+      }
+    }
   },
    created() {
      // Subscribe to authentication status changes
     this.$gapi.listenUserSignIn((isSignedIn) => {
       this.isSignedIn = isSignedIn
-      this.isAppLoaded = true;
+      if (isSignedIn) {
+        this.requestVillagesDB();
+      }
+      else {
+        this.isAppLoaded = true;
+      }
+
     })
-    if(this.isSignedIn) {
-      this.loadVillageDatabase();
-    }
   },
   methods: {
     updatesFilters(emittedFilters) {
@@ -135,15 +134,16 @@ export default {
     },
     login() {
       this.$gapi.login()
-      // .then(({ currentUser, hasGrantedScopes }) => {
-      //   console.log({ currentUser, hasGrantedScopes })
-      // })
-      .then(this.loadVillageDatabase())
+      .then(this.requestVillagesDB())
     },
     logout() {
-      this.$gapi.logout()
+      this.$gapi.logout();
+      this.villagesDB = null;
+      this.village = null;
+      this.filters = null;
+      this.user = null;
     },
-    loadVillageDatabase() {
+    requestVillagesDB() {
       this.$gapi.getGapiClient().then( gapi =>
           gapi.client.request({
           'method': 'GET',
@@ -152,19 +152,32 @@ export default {
             'mimeType': 'text/csv'
           }
         })
-        .execute(
-          function(response, responseur) {
-            if (response) {
-              this.signInError = true;
-            }
-            else {
-              var csv = JSON.parse(responseur).gapiRequest.data.body;
-              this.villagesDatabase = csvtoJson(csv);
-            }
-          }
-        )
+        .execute((response, responseur) => this.handleRequestVillagesDB(response, responseur))
       )
-    }
+    },
+    handleRequestVillagesDB(response, responseur) {
+      if (response) {
+        this.signInError = true;
+      }
+      else {
+        let inputCSV = JSON.parse(responseur).gapiRequest.data.body;
+          csv({
+            ignoreEmpty: true,
+            checkType: true,
+            colParser:{
+              'geometry.coordinates': function(value) {
+                return JSON.parse(value)
+              },
+            }
+          })
+            .fromString(inputCSV)
+            .then((outputJson) => { 
+              this.villagesDB = outputJson
+              console.log(JSON.stringify(this.villagesDB))
+              this.isAppLoaded = true;
+            } )
+      }
+    },
   },
   watch: { 
     village: function(newVal) {
@@ -280,23 +293,61 @@ export default {
 
 .login-overlay {
   z-index:1050;
-  background: rgba(255, 255, 255, 0.808);
+  /* background: rgba(255, 255, 255, 0.808); */
+  background: rgba(255, 255, 255, 0.883);
 }
 .login-dialbox {
   border: 3px solid #D22F3D;
   background: white;
-  max-width: 100vw;
+  max-width: 420px;
+  /* max-width: 100vw;
   min-width: 200px;
   width: 22.5vw;
   height: 40vh;
   height: 40vh;
-  max-height: 80vh;
-  padding: 3rem;
+  max-height: 80vh; */
+  margin: 2rem;
+  padding: 2.6rem 3rem;
+
 }
+.login-dialbox p {
+  font-size: .825rem
+}
+
+.login-title {
+  display: flex;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.login-dialbox:hover {
+  color: #D22F3D;
+  cursor: pointer;
+}
+
+.login-dialbox:hover .login-link-icon {
+  fill: #D22F3D;
+}
+
 .logout-button {
   position: absolute;
   top: 4px;
   right: 4px;
+  background: white;
+  border: 2px solid #D22F3D;
+  padding: .05rem .3rem;
+  border-radius: 2px;
+  font-weight: 500
+}
+
+.logout-button:hover {
+  color: #D22F3D;
+  cursor: pointer;
+}
+
+.login-link-icon {
+  width: 2rem;
+  margin-left: 1.5rem;
 }
 
 .side-panel {

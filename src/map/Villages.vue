@@ -2,88 +2,90 @@
   <l-layer-group
     layer-type="overlay"
     name="Villages"
+    v-if="villages != null"
   >
   
-  <l-feature-group
-    v-for="feature in filteredVillages"
-    :key="feature.properties.key"
-    :ref="feature.properties.key"
-    @click="handleVillageClick(feature)"
-    @mouseover="overedVillage = feature.properties.key"
-    @mouseout="overedVillage = null"
-  >
-  
-    <l-circle-marker
-      :visible="displayVillagesDot"
-      :lat-lng="[feature.properties.town.geometry.coordinates[1], feature.properties.town.geometry.coordinates[0]]"
-      
-      :stroke="true"
-      :weight='selectedVillage(feature.properties.key) ? zoom/3 : zoom/4.5'
-      :opacity="1"
-      :color="'white'"
-      
-      :fill="true"
-      :radius="selectedVillage(feature.properties.key) ? zoom : zoom/1.4"
-      :fillColor="villageColor(feature.properties.projects)"
-      :fillOpacity="1"
+    <l-feature-group
+      v-for="village in filteredVillages"
+      :key="village.properties.key"
+      :ref="village.properties.key"
+      @click="handleVillageClick(village)"
+      @mouseover="overedVillage = village.properties.key"
+      @mouseout="overedVillage = null"
     >
-      <l-tooltip
-        v-show="filters.displayVillageName || selectedVillage(feature.properties.key)"
-        :options="{
-          permanent: true,
-          direction: 'auto',
-          interactive: true,
-          className: toolTipclassName(feature.properties.projects),
-          offset: [14, 0]
-        }"
+    
+      <l-circle-marker
+        :visible="displayVillagesDot"
+        :lat-lng="[village.properties.town.geometry.coordinates[1], village.properties.town.geometry.coordinates[0]]"
+        
+        :stroke="true"
+        :weight='selectedVillage(village.properties.key) ? zoom/3 : zoom/4.5'
+        :opacity="1"
+        :color="'white'"
+        
+        :fill="true"
+        :radius="selectedVillage(village.properties.key) ? zoom : zoom/1.4"
+        :fillColor="villageColor(village.properties.projects)"
+        :fillOpacity="1"
       >
-        {{feature.properties['name-mou-english']}}
-      </l-tooltip>
-    </l-circle-marker>
+        <l-tooltip
+          v-show="filters.displayVillageName || selectedVillage(village.properties.key)"
+          :options="{
+            permanent: true,
+            direction: 'auto',
+            interactive: true,
+            className: toolTipclassName(village.properties.projects),
+            offset: [14, 0]
+          }"
+        >
+          {{village.properties['name-mou-english']}}
+        </l-tooltip>
+      </l-circle-marker>
 
-    <l-circle-marker
-      :visible="displayVillagesArea"
-      :lat-lng="[feature.properties.town.geometry.coordinates[1], feature.properties.town.geometry.coordinates[0]]"
-      :stroke="true"
-      :weight="selectedVillage(feature.properties.key) ? 2 : 1.25"
-      :color="'white'"
-      :opacity="1"
-      :fillOpacity="1"
-      :radius="selectedVillage(feature.properties.key) ? 5 : 3.5"
-      :fillColor="villageColor(feature.properties.projects)"
-      :options="{interactive: false,}"
-    >
-      <l-tooltip
-        v-show="filters.displayVillageName || selectedVillage(feature.properties.key)"
-        :options="{
-          permanent: true,
-          direction: 'auto',
-          interactive: true,
-          className: toolTipclassName(feature.properties.projects),
-          offset: [14, 0]
-        }"
+      <l-circle-marker
+        :visible="displayVillagesArea"
+        :lat-lng="[village.properties.town.geometry.coordinates[1], village.properties.town.geometry.coordinates[0]]"
+        :stroke="true"
+        :weight="selectedVillage(village.properties.key) ? 2 : 1.25"
+        :color="'white'"
+        :opacity="1"
+        :fillOpacity="1"
+        :radius="selectedVillage(village.properties.key) ? 5 : 3.5"
+        :fillColor="villageColor(village.properties.projects)"
+        :options="{interactive: false,}"
       >
-        {{feature.properties['name-mou-english']}}
-      </l-tooltip>
-    </l-circle-marker>
-    <l-polygon
-      :visible="displayVillagesArea"
-      :lat-lngs="feature.geometry.coordinates"
-      :weight="selectedVillage(feature.properties.key) ? 5 : 3.5"
-      :opacity="selectedVillage(feature.properties.key) ? 1 : .875"
-      :fillOpacity="selectedVillage(feature.properties.key) ? .4 : .125"
-      :color="villageColor(feature.properties.projects)"
-      :fillColor="villageColor(feature.properties.projects)"
-      :smoothFactor="1.75"
-      pane="shadowPane"
-    >
-    </l-polygon>
+        <l-tooltip
+          v-show="filters.displayVillageName || selectedVillage(village.properties.key)"
+          :options="{
+            permanent: true,
+            direction: 'auto',
+            interactive: true,
+            className: toolTipclassName(village.properties.projects),
+            offset: [14, 0]
+          }"
+        >
+          {{village.properties['name-mou-english']}}
+        </l-tooltip>
+      </l-circle-marker>
+      <l-polygon
+        :visible="displayVillagesArea"
+        :lat-lngs="village.geometry.coordinates"
+        :weight="selectedVillage(village.properties.key) ? 5 : 3.5"
+        :opacity="selectedVillage(village.properties.key) ? 1 : .875"
+        :fillOpacity="selectedVillage(village.properties.key) ? .4 : .125"
+        :color="villageColor(village.properties.projects)"
+        :fillColor="villageColor(village.properties.projects)"
+        :smoothFactor="1.75"
+        pane="shadowPane"
+      >
+      </l-polygon>
 
-  </l-feature-group>
+    </l-feature-group>
   </l-layer-group>
 </template>
 
 <script>
+
 import { 
   LLayerGroup,
   LTooltip,
@@ -92,22 +94,6 @@ import {
   LPolygon,
   } from 'vue2-leaflet';
 import L from 'leaflet';
-
-
-import villageAreaAndDotData from '../assets/village-area-dot-data';
-
-function geojsonToLatLng(geojson) {
-  let latLng = geojson;
-  geojson.features.forEach(feature => {
-    let featureGeoCoordLatlng = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1, false)
-    feature.geometry.coordinates = featureGeoCoordLatlng;
-  });
-  return latLng;
-
-}
-
-let latLngVillagesArea = geojsonToLatLng(villageAreaAndDotData);
-
 
 export default {
   name: 'Villages',
@@ -124,14 +110,13 @@ export default {
         permanent: true,
         direction: 'auto',
       },
-      villages: villageAreaAndDotData,
       overedVillage: null,
       clickedVillage: null,
-      latLngVillagesArea,
       tooltipclassName: 'village-label',
     };
   },
   props: {
+    villages: null,
     filters: {
       type: Object,
       required: true,
@@ -147,75 +132,55 @@ export default {
   },
   computed: {
     filteredVillages() {
-      return this.villages.features.filter(
-        (feature) => {
+      return this.villages.filter(
+        (village) => {
           
+          // Apply Village Filter
           let includedVillage;
           if (this.filters.villageSelection == null) includedVillage = true;
           else
-           if (this.filters.villageSelection.includes(feature.properties.key)) 
+           if (this.filters.villageSelection.includes(village.properties.key)) 
               includedVillage = true
           else includedVillage = false;
           
+          // Apply Project Filter
           let includedProject;
           if (this.filters.projectSelection == 'all') includedProject = true;
-          else includedProject = feature.properties.projects.join('').includes(this.filters.projectSelection);
+          else includedProject = village.properties.projects.join('').includes(this.filters.projectSelection);
           
+          // Apply District Filter
           let includedDistrict;
           if (this.filters.districtSelection == 'all') includedDistrict = true
-          else includedDistrict = feature.properties.district.includes(this.filters.districtSelection)
+          else includedDistrict = village.properties.district.includes(this.filters.districtSelection)
           
+          // Apply Activity Filter
           let includedActivity;
           if (this.filters.activitySelection == 'all') includedActivity = true
+          // ---- baseline
           else if 
             (this.filters.activitySelection == 'baseline'
-              && !!feature.properties['baseline_strategy'].population.total) 
+              && !!village.properties.data
+              && !!village.properties.data['baseline_strategy'])
             includedActivity = true
+          // ---- any infra
           else if
             (this.filters.activitySelection == 'with_infra'
-              && (feature.properties['sls2'].infrastructure.type
-              || feature.properties['drr4'].infrastructure.type)
+            && (village.properties.data &&
+                (village.properties.data['SLS2_infrastructure']
+                 || village.properties.data['DRR4_infrastructure']))
             )
             includedActivity = true
-          else if
-            (
-              this.filters.activitySelection == 'infra_bridge'
-              && (
-               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('ridge'))
-               || 
-               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('ridge'))
-              )
-            )
+          // ---- bridge
+          else if (this.infrastructureFilter(village, 'infra_bridge', 'ridge'))
             includedActivity = true
-          else if
-            (
-              this.filters.activitySelection == 'infra_box_culvert'
-              && (
-               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Box Culvert'))
-               || 
-               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Box Culvert'))
-              )
-            )
+          // ---- box culvert
+          else if (this.infrastructureFilter(village, 'infra_box_culvert', 'Box Culvert'))
             includedActivity = true
-          else if
-            (
-              this.filters.activitySelection == 'infra_wire_constuction'
-              && (
-               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Wire construction'))
-               || 
-               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Wire construction'))
-              )
-            )
+          // ---- wire construction
+          else if (this.infrastructureFilter(village, 'infra_wire_constuction', 'Wire construction'))
             includedActivity = true
-          else if
-            (
-              this.filters.activitySelection == 'infra_road'
-              && (
-               (feature.properties['sls2'].infrastructure.type && feature.properties['sls2'].infrastructure.type.includes('Road'))
-               || 
-               (feature.properties['drr4'].infrastructure.type && feature.properties['drr4'].infrastructure.type.includes('Road'))
-              )
-            )
+          // ---- road
+          else if (this.infrastructureFilter(village, 'infra_road', 'Road'))
             includedActivity = true
           else includedActivity = false
 
@@ -234,11 +199,19 @@ export default {
       else return false
     },
   },
+  watch: {
+    villages: function(villages) {
+      villages.forEach(village => {
+        village.geometry.coordinates = L.GeoJSON.coordsToLatLngs(village.geometry.coordinates, 1, false);
+      });
+      console.log(villages)
+    },
+  },
   methods: {
-    handleVillageClick(feature){
-      if (this.clickedVillage != feature.properties.key) {
-        this.$emit('village', feature)
-        this.clickedVillage = feature.properties.key
+    handleVillageClick(village){
+      if (this.clickedVillage != village.properties.key) {
+        this.$emit('village', village)
+        this.clickedVillage = village.properties.key
       }
       else {
         this.$emit('village', {});
@@ -265,6 +238,17 @@ export default {
       // SLS only
       else return 'village-label-sls';
     },
+    infrastructureFilter(village, filterName, infraName) {
+      return (this.filters.activitySelection == filterName
+              && ( village.properties.data &&
+                    ((  village.properties.data['SLS2_infrastructure'] 
+                    && village.properties.data['SLS2_infrastructure'].type
+                    && village.properties.data['SLS2_infrastructure'].type.includes(infraName))
+                  || (  village.properties.data['DRR4_infrastructure']
+                    && village.properties.data['DRR4_infrastructure'].type
+                    && village.properties.data['DRR4_infrastructure'].type.includes(infraName))
+              )))
+    }
   },
 };
 </script>

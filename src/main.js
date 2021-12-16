@@ -31,6 +31,22 @@ Vue.use(VueGapi, {
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   scope: ' https://www.googleapis.com/auth/drive.readonly',
 })
+
+Vue.mixin({
+  methods: {
+    unslugify: function (string, capitalizeAllWords) {
+      let seperatesWords = string.toString().split('_')
+      let mergedWords = [];
+      seperatesWords.forEach( (word, i) => {
+        if (word == "nb") word = 'N° of';
+        if (capitalizeAllWords || i == 0) word = word.charAt(0).toUpperCase() + word.slice(1);
+        mergedWords.push(word)
+      });
+      return mergedWords.join(' ')
+    },
+  },
+})
+
 new Vue({
   render: h => h(App),
 }).$mount('#app')

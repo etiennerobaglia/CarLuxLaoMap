@@ -3,12 +3,12 @@
     <div class="village-stats-text">
       <div class="village-stats-tooltip">Data source:<br> Project MoU</div>
       <div>
-        <div><strong>Population: </strong> {{villageStats.mou.population}}</div>
-        <div><strong>Households: </strong> {{villageStats.mou.household}}</div>
+        <div><strong>Population: </strong> {{villageStats.population}}</div>
+        <div><strong>Households: </strong> {{villageStats.household}}</div>
       </div>
       <div class="village-stat-right">
-        <div class="village-stat-right-info"><strong>Females: </strong> {{villageStats.mou.women}} ({{womenRatioRounded}} %)</div>
-        <div class="village-stat-right-info"><strong>Males: </strong> {{villageStats.mou.population - villageStats.mou.women}} ({{100-womenRatioRounded}} %)</div>
+        <div class="village-stat-right-info"><strong>Females: </strong> {{villageStats.women}} ({{womenRatioRounded}} %)</div>
+        <div class="village-stat-right-info"><strong>Males: </strong> {{villageStats.population - villageStats.women}} ({{100-womenRatioRounded}} %)</div>
       </div>
     </div>
     <div class="village-stats-population">
@@ -32,16 +32,16 @@ export default {
   },
   computed: {
     womenRatioRounded() {
-      let ratio = (this.villageStats.mou.women*100)/this.villageStats.mou.population;
+      let ratio = (this.villageStats.women*100)/this.villageStats.population;
       return Math.round(ratio * 10) / 10;
     },
     ethnicities() {
       return {
-        "Lao Loum": this.villageStats.mou.laoloum,
-        "Hmong": this.villageStats.mou.moung,
-        "Khmu": this.villageStats.mou.keummou,
-        "Pong": this.villageStats.mou.fong,
-        "Tai": this.villageStats.mou.tai,
+        "Lao Loum": this.villageStats.laoloum,
+        "Hmong": this.villageStats.moung,
+        "Khmu": this.villageStats.keummou,
+        "Pong": this.villageStats.fong,
+        "Tai": this.villageStats.tai,
       }
     },
     ethnicitiesChartData() {

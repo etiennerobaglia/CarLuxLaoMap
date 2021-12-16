@@ -2,12 +2,12 @@
   <section class="details">
     <header
       class="details-header"
-      :class="{'details-header-active': showDetails}"
-      @click="showDetails = !showDetails"
+      :class="{'details-header-active': isDetailsActive}"
+      @click="isDetailsActive = !isDetailsActive"
     >
       <div class="details-title-container">
         <h3 class="details-title">
-          {{title}}
+          {{unslugify(title, true)}}
         </h3>
       </div>
       <svg
@@ -18,7 +18,7 @@
       </svg>
     </header>
     <div
-      v-show="showDetails"
+      v-show="isDetailsActive"
       class="details-content"
     >
       <div
@@ -35,7 +35,7 @@
             && value !== 'NA'"
         >
           <span class="detail-name">
-            {{name.toString().split('_').join(' ')}}: 
+            {{unslugify(name, false)}}: 
           </span>
           <span class="detail-value">{{value}}</span>
         </div>
@@ -52,7 +52,7 @@
           && Object.keys(value).length"
       >
         <span class="detail-name detail-item-list-title">
-          {{name.toString().split('_').join(' ')}}:
+          {{unslugify(name, false)}}:
         </span>
         <ul 
           class="detail-item-list"
@@ -68,9 +68,7 @@
           >
             <li class="detail-item-list-pair">
               <span class="detail-item-list-name">
-                {{rowName.toString()
-                    .split('nb').join('N° of')
-                    .split('_').join(' ')}}
+                {{unslugify(rowName, false)}}
               </span>
               <span class="detail-item-list-value">{{rowValue}}</span>
             </li>
@@ -84,11 +82,15 @@
 <script>
 export default {
   name: 'InfoDetails',
+  data() {
+    return {
+      isDetailsActive: false,
+    }
+  },
   props: {
     title: String,
     icon: String,
     details: Object,
-    showDetails: Boolean,
   }
 }
 
@@ -157,7 +159,6 @@ export default {
 
   .detail-name {
     font-weight: 600;
-    text-transform: capitalize;
     margin-right: .5rem;
   }
   .detail-value {
@@ -181,7 +182,6 @@ export default {
 
   .detail-item-list-name {
     font-weight: 600;
-    text-transform: capitalize;
   }
 
 </style>
