@@ -7,6 +7,7 @@
       :villagesDB="villagesDB"
       :DBDownloadError="DBDownloadError"
       :DBParseError="DBParseError"
+      :GapiInitError="GapiInitError"
       @login="login()"
     />
     <div class="logo-container">
@@ -87,6 +88,7 @@ export default {
     return {
       isAppLoaded: false,
       isSignedIn: null,
+      GapiInitError: null,
       DBDownloadError: null,
       DBParseError: null,
       filters: Object,
@@ -112,12 +114,16 @@ export default {
     this.$gapi.listenUserSignIn((isSignedIn) => {
       this.isSignedIn = isSignedIn
       if (isSignedIn) {
-        this.requestVillagesDB();
+        this.requestVillagesDB()
       }
       else {
         this.isAppLoaded = true;
       }
     })
+    .catch(err => {
+      this.GapiInitError = err
+      this.isAppLoaded = true;
+    });
   },
   methods: {
     updatesFilters(emittedFilters) {
@@ -139,16 +145,16 @@ export default {
       this.DBDownloadError = null;
     },
     requestVillagesDB() {
-        this.$gapi.getGapiClient().then( gapi =>
-            gapi.client.request({
-            'method': 'GET',
-            'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
-            'params': {
-              'mimeType': 'text/csv'
-            }
-          })
-          .execute((response, responseur) => this.handleRequestVillagesDB(response, responseur))
-        )
+      this.$gapi.getGapiClient().then(gapi =>
+        gapi.client.request({
+          'method': 'GET',
+          'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
+          'params': {
+            'mimeType': 'text/csv'
+          }
+        })
+        .execute((response, responseur) => this.handleRequestVillagesDB(response, responseur))
+      )
     },
     handleRequestVillagesDB(response, responseur) {
       if (response) {
