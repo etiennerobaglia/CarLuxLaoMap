@@ -1,38 +1,15 @@
 <template>
   <div id="app-root">
+    <Overlay
+      :isAppLoaded="isAppLoaded"
+      :isSignedIn="isSignedIn"
+      :userName="userName"
+      :villagesDB="villagesDB"
+      :DBDownloadError="DBDownloadError"
+      :DBParseError="DBParseError"
+      @login="login()"
+    />
     <div class="logo-container">
-    </div>
-    <div class="overlay loading-overlay" v-if="!isAppLoaded">
-      <div class="loader">Loading...</div>
-      <div class="logo-container">
-      </div>
-    </div>
-    <div class="overlay login-overlay" v-if="!isSignedIn && !villagesDB">
-      <div class="login-dialbox" @click="login()">
-        <div class="login-title">
-          <h2>
-            Click here to Log In
-          </h2>
-          <svg class="login-link-icon" viewBox="0 0 20 20">
-            <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
-          </svg>
-        </div>
-        <p>Privacy add-on could prevent signing in with Google. You should try to disable add-ons like Ghostery, Privacy Badger etc., on this website.</p>
-      </div> 
-    </div>
-    <div class="overlay login-overlay" v-if="DBDownloadError">
-      <div class="login-dialbox" @click="login()">
-        <div class="login-title">
-          <h2>
-            Error, click to retry
-          </h2>
-          <svg class="login-link-icon" viewBox="0 0 20 20">
-            <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
-          </svg>
-        </div>
-        <p>Could not access the village database. Make sure the user {{userName}} has access to the database file.</p>
-        <p>{{DBDownloadError}}</p>
-      </div> 
     </div>
     <div class="side-panel">
       <button class="logout-button" @click="logout()" v-if="isSignedIn">
@@ -92,6 +69,7 @@
 
 <script>
 
+import Overlay from './Overlay.vue';
 import Map from './map/Map.vue';
 import InfoPanel from './info-panel/InfoPanel.vue';
 import Filters from './filtering/Filters.vue';
@@ -100,6 +78,7 @@ import * as csv from "csvtojson";
 export default {
   name: 'App',
   components: {
+    Overlay,
     Map,
     Filters,
     InfoPanel,
@@ -109,6 +88,7 @@ export default {
       isAppLoaded: false,
       isSignedIn: null,
       DBDownloadError: null,
+      DBParseError: null,
       filters: Object,
       village: null,
       displayFilter: true,
@@ -189,10 +169,17 @@ export default {
               },
             }
           })
-            .fromString(inputCSV)
-            .then((outputJson) => { 
-              this.villagesDB = outputJson
+            .on('error',(err)=>{
+              console.log(err)
+              this.DBParseError = err
               this.isAppLoaded = true;
+            })
+            .fromString(inputCSV)
+            .then((outputJson) => {
+              if (!this.DBParseError) {
+                this.villagesDB = outputJson
+                this.isAppLoaded = true;
+              }
             } )
       }
     },
@@ -228,50 +215,6 @@ export default {
   color: #3d3d3d;
 }
 
-/* LOADER */
-.loader,
-.loader:after {
-  border-radius: 50%;
-  width: 10em;
-  height: 10em;
-}
-.loader {
-  margin: 60px auto;
-  font-size: 8px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-left: 1.1em solid #D22F3D;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
-}
-@-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-/* end LOADER */
-
 .logo-container {
   position: absolute;
   left: 8px;
@@ -282,69 +225,6 @@ export default {
   width: 100px;
   height: 75px;
   bottom: 12px;
-}
-
-.loading-overlay .logo-container {
-  position: relative;
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 185px;
-  /* margin-top: 2rem; */
-}
-
-.overlay {
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(255, 166, 166, 0.712);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loading-overlay {
-  background: white;
-  z-index:1100;
-  flex-direction: column;
-}
-
-.login-overlay {
-  z-index:1050;
-  /* background: rgba(255, 255, 255, 0.808); */
-  background: rgba(255, 255, 255, 0.883);
-}
-.login-dialbox {
-  border: 3px solid #D22F3D;
-  background: white;
-  max-width: 420px;
-  /* max-width: 100vw;
-  min-width: 200px;
-  width: 22.5vw;
-  height: 40vh;
-  height: 40vh;
-  max-height: 80vh; */
-  margin: 2rem;
-  padding: 2.6rem 3rem;
-
-}
-.login-dialbox p {
-  font-size: .825rem
-}
-
-.login-title {
-  display: flex;
-  align-items: center;
-  padding-bottom: 1rem;
-}
-
-.login-dialbox:hover {
-  color: #D22F3D;
-  cursor: pointer;
-}
-
-.login-dialbox:hover .login-link-icon {
-  fill: #D22F3D;
 }
 
 .logout-button {
