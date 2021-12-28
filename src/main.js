@@ -27,7 +27,7 @@ Vue.prototype.$LightRed = '#f70f0f';
 
 Vue.use(VueGapi, {
   // apiKey: '<YOUR_API_KEY>',
-  clientId: '230010715127-1ubbqmncfsh0p9kfq5ui3k21ir0s97un.apps.googleusercontent.com',
+  clientId: '481834503208-381snrc1m9pp0rm5knmarqg3crfhinrr.apps.googleusercontent.com',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   scope: 'https://www.googleapis.com/auth/drive.file',
 })
