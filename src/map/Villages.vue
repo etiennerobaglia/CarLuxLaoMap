@@ -204,7 +204,6 @@ export default {
       villages.forEach(village => {
         village.geometry.coordinates = L.GeoJSON.coordsToLatLngs(village.geometry.coordinates, 1, false);
       });
-      console.log(villages)
     },
   },
   methods: {

@@ -109,7 +109,6 @@ export default {
       this.villagesDB.forEach(village => {
         keys.push(village.properties.key)
       });
-      console.log(keys)
       return keys;
     }
   },

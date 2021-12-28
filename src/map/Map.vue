@@ -46,6 +46,7 @@
         :attribution="tileProvider.attribution"
         layer-type="base"/>
       <Villages
+        v-if='villagesDB'
         @village="village => $emit('village', village)"
         :filters="filters"
         :zoom="zoom"
@@ -141,9 +142,7 @@ export default {
     }
   },
   props: {
-    filters: {
-      required: true,
-    },
+    filters: null,
     villagesDB: null,
   },
   mounted () {

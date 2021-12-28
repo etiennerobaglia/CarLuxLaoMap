@@ -20,6 +20,20 @@
         <p>Privacy add-on could prevent signing in with Google. You should try to disable add-ons like Ghostery, Privacy Badger etc., on this website.</p>
       </div> 
     </div>
+    <div class="overlay login-overlay" v-if="DBDownloadError">
+      <div class="login-dialbox" @click="login()">
+        <div class="login-title">
+          <h2>
+            Error, click to retry
+          </h2>
+          <svg class="login-link-icon" viewBox="0 0 20 20">
+            <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
+          </svg>
+        </div>
+        <p>Could not access the village database. Make sure the user {{userName}} has access to the database file.</p>
+        <p>{{DBDownloadError}}</p>
+      </div> 
+    </div>
     <div class="side-panel">
       <button class="logout-button" @click="logout()" v-if="isSignedIn">
            Log out {{userName}}.
@@ -94,26 +108,27 @@ export default {
     return {
       isAppLoaded: false,
       isSignedIn: null,
-      signInError: null,
+      DBDownloadError: null,
       filters: Object,
       village: null,
       displayFilter: true,
       displayPanel: true,
       villagesDB: null,
+      oauthToken: null,
     };
   },
   computed: {
     userName() {
       const user = this.$gapi.getUserData()
       if (user) {
-          return user.fullName
+        return user.fullName
       } else {
         return null;
       }
     }
   },
-   created() {
-     // Subscribe to authentication status changes
+  created() {
+    // Subscribe to authentication status changes
     this.$gapi.listenUserSignIn((isSignedIn) => {
       this.isSignedIn = isSignedIn
       if (isSignedIn) {
@@ -122,7 +137,6 @@ export default {
       else {
         this.isAppLoaded = true;
       }
-
     })
   },
   methods: {
@@ -134,30 +148,35 @@ export default {
     },
     login() {
       this.$gapi.login()
-      .then(this.requestVillagesDB())
+      .then(({ currentUser}) => {
+          if (currentUser.vc && currentUser.vc['access_token']) this.oauthToken = currentUser.vc['access_token']
+      })
     },
     logout() {
       this.$gapi.logout();
       this.villagesDB = null;
       this.village = null;
-      this.filters = null;
-      this.user = null;
+      this.DBDownloadError = null;
     },
     requestVillagesDB() {
-      this.$gapi.getGapiClient().then( gapi =>
-          gapi.client.request({
-          'method': 'GET',
-          'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
-          'params': {
-            'mimeType': 'text/csv'
-          }
-        })
-        .execute((response, responseur) => this.handleRequestVillagesDB(response, responseur))
-      )
+        this.$gapi.getGapiClient().then( gapi =>
+            gapi.client.request({
+            'method': 'GET',
+            'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
+            'params': {
+              'mimeType': 'text/csv'
+            }
+          })
+          .execute((response, responseur) => this.handleRequestVillagesDB(response, responseur))
+        )
     },
     handleRequestVillagesDB(response, responseur) {
       if (response) {
-        this.signInError = true;
+        if (response.error && response.error.message) {
+          this.isAppLoaded = true;
+          this.DBDownloadError = response.error.message;
+        }
+        else this.logout();
       }
       else {
         let inputCSV = JSON.parse(responseur).gapiRequest.data.body;
@@ -173,7 +192,6 @@ export default {
             .fromString(inputCSV)
             .then((outputJson) => { 
               this.villagesDB = outputJson
-              console.log(JSON.stringify(this.villagesDB))
               this.isAppLoaded = true;
             } )
       }
