@@ -199,13 +199,6 @@ export default {
       else return false
     },
   },
-  watch: {
-    villages: function(villages) {
-      villages.forEach(village => {
-        village.geometry.coordinates = L.GeoJSON.coordsToLatLngs(village.geometry.coordinates, 1, false);
-      });
-    },
-  },
   methods: {
     handleVillageClick(village){
       if (this.clickedVillage != village.properties.key) {

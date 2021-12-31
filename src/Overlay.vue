@@ -5,6 +5,8 @@
       <div class="logo-container-overlay">
       </div>
     </div>
+    <div class="overlay picker-overlay" v-else-if="isGooglePicker">
+    </div>
     <div class="overlay login-overlay" v-else-if="GapiInitError">
       <div class="login-dialbox">
         <div class="login-title">
@@ -15,7 +17,7 @@
             <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
           </svg>
         </div>
-        <p>Private Navigation could prevent signing in with Google. Please use another browser window.</p>
+        <p>Private Navigation can prevent signing in with Google. Please use another browser window.</p>
         <p>Error Message: <em>{{GapiInitError.details}}</em></p>
       </div> 
     </div>
@@ -29,34 +31,55 @@
             <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
           </svg>
         </div>
-        <p>Privacy add-on could prevent signing in with Google. You should try to disable add-ons like Ghostery, Privacy Badger etc., on this website.</p>
+        <p>Privacy add-on can prevent signing in with Google. You should try to disable add-ons like Ghostery, Privacy Badger etc., on this website.</p>
       </div> 
     </div>
-    <div class="overlay login-overlay" v-else-if="DBDownloadError">
-      <div class="login-dialbox login-dialbox-clickable" @click="$emit('login');">
+    <div class="overlay login-overlay" v-else-if="DBDownloadError && DBDownloadError.includes('Permission: Request had insufficient authentication scopes') && !isGooglePicker">
+      <div class="login-dialbox">
         <div class="login-title">
           <h2>
-            Error, click to retry
+            Error: <em>no access</em>
           </h2>
           <svg class="login-link-icon" viewBox="0 0 20 20">
             <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
           </svg>
         </div>
-        <p>Could not access the village database. Make sure the user <strong>{{userName}}</strong> has access to the database file.</p>
+        <p>This Application is not allowed to access Google Drive, logout and login again.</p>
+        <p>Error Message: <em>{{DBDownloadError}}</em></p>
+      </div> 
+    </div>
+    <div class="overlay login-overlay" v-else-if="DBDownloadError && !isGooglePicker">
+      <div class="login-dialbox login-dialbox-clickable" @click="$emit('picker');">
+        <div class="login-title">
+          <h2>
+            Error: <em>no access</em>
+          </h2>
+          <svg class="login-link-icon" viewBox="0 0 20 20">
+            <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
+          </svg>
+        </div>
+        <p>No access can derive from the following:
+          <ul>
+            <li>This Application is not allowed to use the file. Click here to allow. </li>
+            <li>This Application is not allowed to access Google Drive, logout and login again. </li>
+            <li>The user <strong>{{userName}}</strong> doesn't have access to the database file, the access should be shared within Google Drive/Spreadsheet.</li>
+          </ul>
+        </p>
         <p>Error Message: <em>{{DBDownloadError}}</em></p>
       </div> 
     </div>
     <div class="overlay login-overlay" v-else-if="DBParseError">
-      <div class="login-dialbox login-dialbox-clickable" @click="$emit('login');">
+      <div class="login-dialbox login-dialbox-clickable" @click="$emit('requestVillagesDB');">
         <div class="login-title">
           <h2>
-            Error, click to retry
+            Error: <em>file malformed</em>
           </h2>
           <svg class="login-link-icon" viewBox="0 0 20 20">
             <path d="M16.469,8.924l-2.414,2.413c-0.156,0.156-0.408,0.156-0.564,0c-0.156-0.155-0.156-0.408,0-0.563l2.414-2.414c1.175-1.175,1.175-3.087,0-4.262c-0.57-0.569-1.326-0.883-2.132-0.883s-1.562,0.313-2.132,0.883L9.227,6.511c-1.175,1.175-1.175,3.087,0,4.263c0.288,0.288,0.624,0.511,0.997,0.662c0.204,0.083,0.303,0.315,0.22,0.52c-0.171,0.422-0.643,0.17-0.52,0.22c-0.473-0.191-0.898-0.474-1.262-0.838c-1.487-1.485-1.487-3.904,0-5.391l2.414-2.413c0.72-0.72,1.678-1.117,2.696-1.117s1.976,0.396,2.696,1.117C17.955,5.02,17.955,7.438,16.469,8.924 M10.076,7.825c-0.205-0.083-0.437,0.016-0.52,0.22c-0.083,0.205,0.016,0.437,0.22,0.52c0.374,0.151,0.709,0.374,0.997,0.662c1.176,1.176,1.176,3.088,0,4.263l-2.414,2.413c-0.569,0.569-1.326,0.883-2.131,0.883s-1.562-0.313-2.132-0.883c-1.175-1.175-1.175-3.087,0-4.262L6.51,9.227c0.156-0.155,0.156-0.408,0-0.564c-0.156-0.156-0.408-0.156-0.564,0l-2.414,2.414c-1.487,1.485-1.487,3.904,0,5.391c0.72,0.72,1.678,1.116,2.696,1.116s1.976-0.396,2.696-1.116l2.414-2.413c1.487-1.486,1.487-3.905,0-5.392C10.974,8.298,10.55,8.017,10.076,7.825"></path>
           </svg>
         </div>
         <p>The file seems malformed.</p>
+        <p>Fix the file and <strong>clik here to retry</strong>.</p>
         <p>Error Message: <em>{{DBParseError}}</em></p>
       </div> 
     </div>
@@ -67,6 +90,7 @@
 export default {
   name: 'Overlay',
   props: {
+    isGooglePicker: null,
     isAppLoaded: null,
     isSignedIn: null,
     userName: null,
@@ -113,6 +137,10 @@ export default {
   z-index:1050;
   background: rgba(255, 255, 255, 0.883);
 }
+.picker-overlay {
+  z-index:999;
+  background: rgba(255, 255, 255, 0.883);
+}
 .login-dialbox {
   border: 3px solid #D22F3D;
   background: white;
@@ -123,6 +151,10 @@ export default {
 }
 .login-dialbox p {
   font-size: .825rem
+}
+
+.login-dialbox p ul {
+ margin-left: 1.25rem
 }
 
 .login-title {

@@ -4,6 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import './global.css';
 import VueGapi from 'vue-gapi'
 
+let cliendID = "481834503208-381snrc1m9pp0rm5knmarqg3crfhinrr.apps.googleusercontent.com";
+
 Vue.config.productionTip = false
 
 // styling
@@ -25,9 +27,11 @@ Vue.prototype.$MiddleRed = '#D92E40';
 Vue.prototype.$LightRed = '#f70f0f';
 // end styling
 
+Vue.prototype.$clientId = cliendID;
+
 Vue.use(VueGapi, {
   // apiKey: '<YOUR_API_KEY>',
-  clientId: '481834503208-381snrc1m9pp0rm5knmarqg3crfhinrr.apps.googleusercontent.com',
+  clientId: cliendID,
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   scope: 'https://www.googleapis.com/auth/drive.file',
 })

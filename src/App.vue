@@ -1,21 +1,24 @@
 <template>
   <div id="app-root">
     <Overlay
+      :isGooglePicker="isGooglePicker"
       :isAppLoaded="isAppLoaded"
       :isSignedIn="isSignedIn"
-      :userName="userName"
+      :userName="userName()"
       :villagesDB="villagesDB"
       :DBDownloadError="DBDownloadError"
       :DBParseError="DBParseError"
       :GapiInitError="GapiInitError"
+      @requestVillagesDB="requestVillagesDB()"
       @login="login()"
+      @picker="picker()"
     />
+    <button class="logout-button" @click="logout()" v-if="isSignedIn">
+      Log out {{userName()}}.
+    </button>
     <div class="logo-container">
     </div>
     <div class="side-panel">
-      <button class="logout-button" @click="logout()" v-if="isSignedIn">
-           Log out {{userName}}.
-      </button>
       <div
         class="side-panel-filters"
       >
@@ -75,6 +78,8 @@ import Map from './map/Map.vue';
 import InfoPanel from './info-panel/InfoPanel.vue';
 import Filters from './filtering/Filters.vue';
 import * as csv from "csvtojson";
+import L from 'leaflet';
+
 
 export default {
   name: 'App',
@@ -88,6 +93,7 @@ export default {
     return {
       isAppLoaded: false,
       isSignedIn: null,
+      isGooglePicker: false,
       GapiInitError: null,
       DBDownloadError: null,
       DBParseError: null,
@@ -96,18 +102,15 @@ export default {
       displayFilter: true,
       displayPanel: true,
       villagesDB: null,
-      oauthToken: null,
     };
   },
   computed: {
-    userName() {
-      const user = this.$gapi.getUserData()
-      if (user) {
-        return user.fullName
-      } else {
-        return null;
-      }
-    }
+  },
+  mounted () {
+    let gDrive = document.createElement("script");
+    gDrive.setAttribute("type", "text/javascript");
+    gDrive.setAttribute("src", "https://apis.google.com/js/api.js");
+    document.head.appendChild(gDrive);
   },
   created() {
     // Subscribe to authentication status changes
@@ -134,15 +137,32 @@ export default {
     },
     login() {
       this.$gapi.login()
-      .then(({ currentUser}) => {
-          if (currentUser.vc && currentUser.vc['access_token']) this.oauthToken = currentUser.vc['access_token']
-      })
+      // .then(({ currentUser}) => {
+      //     if (currentUser.vc && currentUser.vc['access_token']) this.oauthToken = currentUser.vc['access_token']
+      // })
     },
     logout() {
       this.$gapi.logout();
+      this.isGooglePicker = false;
       this.villagesDB = null;
       this.village = null;
       this.DBDownloadError = null;
+    },
+    userName() {
+      let user = this.$gapi.getUserData()
+      if (user) {
+        return user.fullName
+      } else {
+        return null;
+      }
+    },
+    token() {
+      let user = this.$gapi.getUserData()
+      if (user) {
+        return user.accessToken
+      } else {
+        return null;
+      }
     },
     requestVillagesDB() {
       this.$gapi.getGapiClient().then(gapi =>
@@ -176,19 +196,77 @@ export default {
             }
           })
             .on('error',(err)=>{
-              console.log(err)
               this.DBParseError = err
               this.isAppLoaded = true;
             })
             .fromString(inputCSV)
             .then((outputJson) => {
-              if (!this.DBParseError) {
+                outputJson.forEach(village => {
+                  village.geometry.coordinates = L.GeoJSON.coordsToLatLngs(village.geometry.coordinates, 1, false);
+                });
+                this.DBDownloadError = false;
                 this.villagesDB = outputJson
                 this.isAppLoaded = true;
-              }
+                this.DBParseError = false
             } )
       }
     },
+    //google picker
+    handleAuthResult(authResult) {
+      // console.log("Handle Auth result", authResult);
+      if (authResult && !authResult.error) {
+        // this.oauthToken = authResult.access_token;
+        this.createPicker();
+      }
+    },
+    async picker() {
+      // console.log("Clicked");
+      // eslint-disable-next-line no-undef
+      await gapi.load("auth2", () => {
+        // console.log("Auth2 Loaded");
+        // eslint-disable-next-line no-undef
+        gapi.auth2.authorize(
+          {
+            client_id: this.$clientId,
+            scope: this.scope,
+            immediate: false
+          },
+          this.handleAuthResult
+        );
+      });
+      // eslint-disable-next-line no-undef
+      gapi.load("picker", () => {
+        // console.log("Picker Loaded");
+        this.createPicker();
+      });
+    },
+    createPicker() {
+      this.isGooglePicker = true;
+      // eslint-disable-next-line no-undef
+      let picker = new google.picker.PickerBuilder()
+      // eslint-disable-next-line no-undef
+        // .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+        .setAppId("481834503208")
+      // eslint-disable-next-line no-undef
+        .addView(google.picker.ViewId.SPREADSHEETS)
+        .setTitle("Pick the Caritas Villages Database Web Map")
+        .setOAuthToken(this.token())
+        .setCallback(this.pickerCallback)
+        .build();
+      picker.setVisible(true);
+    },
+    async pickerCallback(data) {
+      if (data.action == "loaded") {
+        this.isGooglePicker = true;
+      }
+      else if (data.action == "picked" && data.docs[0].id == "1UufkAIe4MJavA-wXAtBMNL4FaMJmWzjsxnBpudGuNlk") {
+        this.isGooglePicker = false;
+        this.DBDownloadError = false;
+      }
+      else this.isGooglePicker = false;
+      // console.log("PickerCallback", data);
+    }
+    //end google picker
   },
   watch: { 
     village: function(newVal) {
@@ -234,9 +312,10 @@ export default {
 }
 
 .logout-button {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+  position: fixed;
+  z-index: 1500;
+  top: 8px;
+  right: 8px;
   background: white;
   border: 2px solid #D22F3D;
   padding: .05rem .3rem;
@@ -343,7 +422,7 @@ export default {
     max-height: 80%;
  }
  .logo-container {
-   top: 0;
+   top: 20px;
    right: 8px;
    left: auto;
  }
