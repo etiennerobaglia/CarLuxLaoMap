@@ -93,7 +93,6 @@ import {
   LFeatureGroup,
   LPolygon,
   } from 'vue2-leaflet';
-import L from 'leaflet';
 
 export default {
   name: 'Villages',
