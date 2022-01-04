@@ -8,4 +8,4 @@ Technologies:
 - [Chart.js](https://www.chartjs.org/)
 - [Google Drive API](https://developers.google.com/drive) & [Google Picker](https://developers.google.com/picker)
 
-![CarLuxLaoMap](./carluxlaomap.jpg)
+![CarLuxLaoMap](/CarLuxLaoMap.jpg )
