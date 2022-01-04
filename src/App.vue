@@ -80,7 +80,6 @@ import Filters from './filtering/Filters.vue';
 import * as csv from "csvtojson";
 import L from 'leaflet';
 
-
 export default {
   name: 'App',
   components: {
@@ -168,7 +167,7 @@ export default {
       this.$gapi.getGapiClient().then(gapi =>
         gapi.client.request({
           'method': 'GET',
-          'path': '/drive/v3/files/1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs/export',
+          'path': '/drive/v3/files/'+this.$villageDbId+'/export',
           'params': {
             'mimeType': 'text/csv'
           }
@@ -256,12 +255,14 @@ export default {
       picker.setVisible(true);
     },
     async pickerCallback(data) {
+      console.log(data)
       if (data.action == "loaded") {
         this.isGooglePicker = true;
       }
-      else if (data.action == "picked" && data.docs[0].id == "1UufkAIe4MJavA-wXAtBMNL4FaMJmWzjsxnBpudGuNlk") {
+      else if (data.action == "picked" && data.docs[0].id == this.$villageDbId) {
         this.isGooglePicker = false;
         this.DBDownloadError = false;
+        this.requestVillagesDB()
       }
       else this.isGooglePicker = false;
       // console.log("PickerCallback", data);
@@ -270,12 +271,9 @@ export default {
   },
   watch: { 
     village: function(newVal) {
-      if (window.matchMedia("(max-width: 990px)").matches) {
-        if (newVal.properties)  {
-          this.displayFilter = false;
-        }
-      }
-      this.displayPanel = true;
+      if (window.matchMedia("(max-width: 990px)").matches && newVal && newVal.properties) 
+        this.displayFilter = false
+      else this.displayPanel = true;
     }
   }
 }

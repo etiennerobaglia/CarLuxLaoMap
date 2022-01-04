@@ -1,24 +1,11 @@
-# xhk-hpn-map
+# 🗺 CarLuxLaoMap
 
-## Project setup
-```
-npm install
-```
+An interactive web map for [Caritas Luxembourg](https://www.caritas.lu/) in Lao PDR with integration of Google Drive API as data source.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Technologies:
+- [Vue 2](https://vuejs.org/)
+- [Leaflet](https://leafletjs.com/)
+- [Chart.js](https://www.chartjs.org/)
+- [Google Drive API](https://developers.google.com/drive) & [Google Picker](https://developers.google.com/picker)
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![CarLuxLaoMap](carluxlaomap.jpg)

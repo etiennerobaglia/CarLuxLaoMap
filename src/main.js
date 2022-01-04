@@ -27,6 +27,7 @@ Vue.prototype.$MiddleRed = '#D92E40';
 Vue.prototype.$LightRed = '#f70f0f';
 // end styling
 
+Vue.prototype.$villageDbId = '1ukxTcJL6dLtbDlOHt0S0pdbuauEsUx3oxgbmPzN0mvs';
 Vue.prototype.$clientId = cliendID;
 
 Vue.use(VueGapi, {
